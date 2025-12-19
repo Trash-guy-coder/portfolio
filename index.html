@@ -1,12 +1,1448 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>Portfolio</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SM-PROJECT | URBAN VOYAGE | DESIGN PORTFOLIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+SC:wght@100..900&display=swap" rel="stylesheet">
+<style>
+/* ===== 主题与布局 (神性升华) ===== */
+:root{
+  --bg:#0d0d0d;--panel:#1a1a1a;--line:#222;--muted:#999;--fg:#e6e6e6;--acc:#ff3366;--glass:rgba(26,26,26,.6);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:'Noto Sans SC','Inter',system-ui,Arial;
+  line-height:1.6; padding-left:200px; overflow-x:hidden;
+}
+/* 侧栏 */
+.sidebar{position:fixed;inset:0 auto 0 0;width:200px;background:#121212;border-right:1px solid var(--line);z-index:40}
+.sidebar-inner{height:100%;display:flex;flex-direction:column}
+.brand{padding:18px 16px;border-bottom:1px solid var(--line);font-weight:800;color:#fff;letter-spacing:.12em}
+.nav-link{display:block;padding:12px 18px;color:var(--muted);text-decoration:none;font-family:ui-monospace,Menlo,monospace;font-size:.85rem;border-left:4px solid transparent;transition:.2s}
+.nav-link:hover{color:#fff;background:#0f0f0f}
+.nav-link.active{color:var(--acc);border-left-color:var(--acc);font-weight:700}
+/* 顶部工具栏（编辑模式） */
+.toolbar{
+  position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(13,13,13,.95),rgba(13,13,13,.6));
+  backdrop-filter:saturate(1.4) blur(6px);border-bottom:1px solid var(--line);
+}
+.toolbar-wrap{max-width:1200px;margin:0 auto;padding:10px 30px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.badge{font:600 .75rem ui-monospace,Menlo,monospace;color:#ddd;background:#202020;border:1px solid #2a2a2a;border-radius:999px;padding:6px 10px}
+.btn{appearance:none;border:1px solid #333;background:#1a1a1a;color:#ddd;padding:8px 12px;border-radius:10px;cursor:pointer;transition:.2s;font-family:inherit;font-size:.9rem}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.acc{background:var(--acc);color:#0d0d0d;border-color:#d42a55;font-weight:700}
+.btn.ghost{background:#141414}
+.btn.small{padding:6px 8px;font-size:.85rem}
+.status{margin-left:auto;font:600 .8rem ui-monospace;color:#bbb}
+/* 容器与标题 */
+.container{max-width:1200px;margin:0 auto;padding:0 30px}
+header{padding:70px 30px 36px;border-bottom:2px solid #2b2b2b}
+
+/* H1: 神性升华 */
+h1{
+  font-size: 3.8rem; /* 增大字号 */
+  letter-spacing: .25em; /* 增大字距 */
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 51, 102, 0.4), 0 0 20px rgba(255, 51, 102, 0.1); /* 戏剧化光晕 */
+  font-weight: 800; 
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+}
+.archive-tag{display:block;color:var(--acc);letter-spacing:.32em;font:.85rem ui-monospace;margin-top:8px}
+
+.section{padding:70px 0;border-bottom:1px solid var(--line);min-height:40vh}
+/* H2: 结构化线条 */
+.section h2{
+  font:700 1rem ui-monospace;
+  color:var(--acc);
+  letter-spacing:.2em;
+  border-bottom:3px solid var(--acc); /* 加粗底部强调线 */
+  padding-bottom:15px;
+  margin-bottom:18px
+}
+.section h3{font-size:1.8rem;margin:26px 0}
+/* Content Block: 数据面板浮现感 */
+.content-block{
+  background:linear-gradient(180deg,#121212,#101010);
+  border:1px solid #282828;
+  border-left:5px solid var(--acc); /* 强化左侧强调色 */
+  padding:18px;border-radius:12px;margin:18px 0 40px;
+  box-shadow: inset 0 0 12px rgba(255, 51, 102, 0.08); /* 柔和内嵌光晕 */
+}
+
+/* Look Item: 悬浮与升华效果 */
+.look-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.look-item{
+  background:linear-gradient(180deg,#151515,#121212);
+  border:1px solid #222;border-radius:14px;padding:18px;
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s; /* 增加过渡 */
+}
+.look-item:hover{
+  transform: translateY(-5px); /* 悬浮升起 */
+  border-color: #383838;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255, 51, 102, 0.3); /* 强调阴影和光晕 */
+}
+
+/* Lookbook 内部元素 */
+.look-item h4{margin:0 0 12px 0}
+.image-area{
+  position:relative;border:2px dashed #3a3a3a;border-radius:12px;min-height:320px;overflow:hidden;background:#0d0d0d;user-select:none;
+}
+.image-area.clickable{cursor:pointer}
+.placeholder{text-align:center;color:#666;padding:100px 10px;font:600 1rem ui-monospace;pointer-events:none}
+.carousel{display:flex;height:100%;transition:transform .4s ease;will-change:transform}
+.frame{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:320px}
+.frame img{max-width:100%;max-height:100%;height:320px;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.counter{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.7);border:1px solid #333;padding:4px 8px;border-radius:999px;font:700 .8rem ui-monospace;pointer-events:none}
+.navbtn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,51,102,.85);border:none;color:#000;font:900 1rem ui-monospace;padding:10px 12px;border-radius:10px;cursor:pointer;z-index:5;transition:.2s}
+.navbtn:hover{background:rgba(255,51,102,1);transform:translateY(-50%) scale(1.05)}
+.navbtn.prev{left:8px} .navbtn.next{right:8px}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;border-bottom:2px solid #333;margin-bottom:22px;flex-wrap:wrap}
+.tab-button{padding:12px 18px;border:none;background:#161616;color:#bbb;border-top-left-radius:8px;border-top-right-radius:8px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit}
+.tab-button.active{background:var(--acc);color:#0d0d0d}
+.tab-button:hover:not(.active){background:#202020}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* Manager styles */
+.manager{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mbtn{padding:6px 8px;border:1px solid #2c2c2c;background:#151515;color:#ddd;border-radius:8px;font-size:.85rem;cursor:pointer;transition:.2s;font-family:inherit}
+.mbtn:hover{background:#202020;border-color:#444}
+.thumbbar{display:flex;gap:8px;overflow:auto;padding:10px;border:1px dashed #333;border-radius:10px;margin-top:12px;min-height:92px}
+.thumb{position:relative;min-width:72px;min-height:72px;border-radius:8px;border:2px solid #2a2a2a;background:#0e0e0e;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;user-select:none}
+.thumb:hover{border-color:#444;transform:scale(1.05)}
+.thumb.dragging{opacity:.5;cursor:grabbing}
+.thumb.drag-over{border-color:var(--acc);background:#1a1a1a}
+.thumb img{max-width:100%;max-height:100%;object-fit:cover;border-radius:7px;pointer-events:none}
+.handle{position:absolute;left:4px;top:4px;background:#202020;border:1px solid #333;color:#bbb;font-size:.7rem;border-radius:6px;padding:2px 6px;cursor:grab;pointer-events:none}
+
+/* FIX: 增大操作按钮点击区域 */
+.act{position:absolute;right:2px;top:2px;display:flex;gap:2px;opacity:0;transition:.2s;z-index:10} /* Z-index added */
+.thumb:hover .act{opacity:1}
+.act .icon{
+  border:none;background:#00000099;border:1px solid #333;color:#ddd;cursor:pointer;border-radius:6px;
+  padding:4px 6px; /* 增大内边距 */
+  font-size:.8rem; /* 增大字体 */
+  transition:.2s;
+  line-height:1; /* 保持行高一致 */
+}
+.act .icon:hover{background:#000;transform:scale(1.1)}
+.cover-badge{position:absolute;right:4px;bottom:4px;background:var(--acc);color:#000;border-radius:6px;padding:2px 6px;font:800 .7rem ui-monospace;pointer-events:none}
+/* 预览层 */
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out}
+.viewer.active{display:flex}
+.viewer-box{max-width:92vw;max-height:88vh;background:#0f0f0f;border:1px solid #333;border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.5);padding:10px}
+.viewer img{max-width:90vw;max-height:84vh;object-fit:contain;border-radius:8px}
+/* Toast/Loader/Media Queries (unchanged) */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:60;display:grid;gap:8px;pointer-events:none}
+.toast .t{background:#141414;border:1px solid #2e2e2e;color:#ddd;padding:10px 14px;border-radius:12px;font:600 .9rem ui-monospace;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.loader{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:55}
+.loader.active{display:flex}
+.spinner{width:40px;height:40px;border:4px solid #333;border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (max-width:1024px){.look-grid{grid-template-columns:1fr}}
+@media (max-width:768px){
+  body{padding-left:0}
+  .sidebar{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line)}
+  .sidebar-inner{flex-direction:row;overflow-x:auto}
+  .brand{white-space:nowrap}
+  .nav-link{display:inline-block;border-left:none;border-bottom:2px solid transparent;white-space:nowrap}
+  .nav-link.active{border-bottom-color:var(--acc)}
+  header{padding:40px 30px 20px}
+  h1{font-size:2rem}
+  .frame img{height:240px}
+}
+::-webkit-scrollbar{height:8px;width:8px}
+::-webkit-scrollbar-track{background:#0d0d0d}
+::-webkit-scrollbar-thumb{background:#2c2c2c;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:#404040}
+</style>
 </head>
 <body>
-  <h1>Portfolio Online</h1>
-  <p>If you see this, GitHub Pages works.</p>
+
+<!-- 侧栏 -->
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <div class="brand">SM-PROJECT</div>
+    <nav id="main-nav">
+      <a href="#strategy" class="nav-link">01. 核心策略</a>
+      <a href="#market" class="nav-link">02. 客群分析</a>
+      <a href="#trends" class="nav-link">03. 趋势解析</a>
+      <a href="#lookbook" class="nav-link active">04. 核心 LOOKBOOK</a>
+      <a href="#data" class="nav-link">05. 数据预测</a>
+      <a href="#summary" class="nav-link">06. 总结与展望</a>
+    </nav>
+  </div>
+</aside>
+
+<!-- 工具栏（编辑模式显示） -->
+<div id="toolbar" class="toolbar" hidden>
+  <div class="toolbar-wrap">
+    <span class="badge">模式: <span id="mode-badge">edit</span></span>
+    <button id="btn-sync" class="btn acc">云端同步（Gist）</button>
+    <button id="btn-save-local" class="btn">本地保存</button>
+    <button id="btn-share" class="btn ghost">生成分享链接</button>
+    <button id="btn-config" class="btn small">配置 GitHub Token</button>
+    <span id="sync-status" class="status">未同步</span>
+  </div>
+</div>
+
+<!-- 主内容 -->
+<div class="main">
+  <header class="container">
+    <h1>[SM PROJECT] URBAN VOYAGE | 都市漫游</h1>
+    <span class="archive-tag">FILE: P-2026-FW | DESIGNER: [集] | STATUS: FINAL (SM OFFER VERSION)</span>
+  </header>
+
+  <!-- 01 核心策略与概念 -->
+  <section id="strategy" class="section container">
+    <h2>01. CORE STRATEGY & CONCEPT</h2>
+    <h3>主题：URBAN VOYAGE（都市漫游）</h3>
+    <div class="content-block">
+      <h4>核心叙事与商业目标</h4>
+      <p>核心：为 <strong>Z 世代提供高品质、趣味性、多场景的日常穿着解决方案</strong>。实现品牌的<strong>实穿性、时尚感和高性价比</strong>的完美平衡。</p>
+      <h4>三大设计支柱 (Three Design Pillars)</h4>
+      <p>1. <strong>品质基本款 (Quality Basics)：</strong> 强调<strong>面料科技</strong>（舒适、耐磨、透气）、<strong>廓形稳定性</strong>和<strong>工艺细节</strong>。商业目标：高复购率、高周转率。</p>
+      <p>2. <strong>趣味性设计 (Playful Design)：</strong> 融合 <strong>IP 符号、拟物化趣味图案</strong>和高饱和流行色彩。商业目标：高话题性、社交媒体传播力。</p>
+      <p>3. <strong>场景模块化 (Modular Utility)：</strong> 强调<strong>一衣多穿</strong>、<strong>城市机能</strong>（防晒/防泼水）和易于搭配的叠穿结构。商业目标：功能溢价、提高客单价。</p>
+    </div>
+  </section>
+
+  <!-- 02 市场定位与客群分析 -->
+  <section id="market" class="section container">
+    <h2>02. MARKET & GEN Z</h2>
+    <h3>目标客群：活力探索者 (Active Explorer)</h3>
+    <div class="content-block">
+        <h4>Gen Z 核心画像与购买驱动力</h4>
+        <p>目标客群（18-25岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
+        <p>购买驱动是<strong>“颜值主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
+    </div>
+  </section>
+
+  <!-- 03 趋势与灵感解析 (情绪版/色彩版植入区) -->
+  <section id="trends" class="section container">
+    <h2>03. TRENDS & MOOD</h2>
+    <h3>趋势转化漏斗：从高街 T 台到商业爆款</h3>
+    <p>本板块展示了从 Miu Miu、Diesel 等高街品牌提取的<strong>结构、肌理、色彩</strong>，并将其转化为符合森马<strong>商业可行性</strong>的灵感矩阵。请在此区域导入您的<strong>“趋势转化漏斗”</strong>图片。</p>
+    <div id="moodboard-area" class="image-area clickable" data-max="20" data-label="情绪版">
+      <div class="placeholder">点击/拖拽图片到此处导入您的趋势转化图（T台、商业应用、森马提炼）</div>
+      <div class="carousel"></div>
+      <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+      <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+      <div class="counter">0/0</div>
+    </div>
+    <div class="manager" data-for="moodboard-area">
+      <button class="mbtn" data-act="upload">上传</button>
+      <button class="mbtn" data-act="set-cover">设为封面</button>
+      <button class="mbtn" data-act="move-up">上移</button>
+      <button class="mbtn" data-act="move-down">下移</button>
+      <button class="mbtn" data-act="del">删除</button>
+      <span class="badge" id="count-moodboard-area">数量: 0</span>
+      <input type="file" accept="image/*" multiple hidden/>
+      <div class="thumbbar" draggable="false"></div>
+    </div>
+  </section>
+
+  <!-- 04 核心 LOOKBOOK (核心造型书展示) -->
+  <section id="lookbook" class="section container">
+    <h2>04. CORE LOOKBOOK</h2>
+    <h3>设计档案：30 个高转化 Look 矩阵</h3>
+    
+    <!-- 选项卡导航 -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="tab-cu">品质与廓形 (VOLUME DRIVER)</button>
+      <button class="tab-button" data-tab="tab-re">形象与工艺 (FASHION/IMAGE)</button>
+      <button class="tab-button" data-tab="tab-em">趣味与爆款 (PLAYFUL/VOLUME)</button>
+    </div>
+    
+    <!-- Tab 1: CU/UT -->
+    <div id="tab-cu" class="tab-content active">
+        <div class="look-grid" id="grid-cu">
+            <!-- Placeholder items inserted here (function will augment analysis) -->
+            <div class="look-item">
+                <h4>LOOK 01 / CU-001: 大廓形斜纹裤档案</h4>
+                <div id="look-1-cu-001" class="image-area clickable" data-max="20" data-label="Look 01">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 02 / CU-002: 廓形茧型棉服</h4>
+                <div id="look-2-cu-002" class="image-area clickable" data-max="20" data-label="Look 02">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 03 / CU-003: 校园运动拼接夹克</h4>
+                <div id="look-3-cu-003" class="image-area clickable" data-max="20" data-label="Look 03">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 04 / CU-004: 运动廓形滚边棉服</h4>
+                <div id="look-4-cu-004" class="image-area clickable" data-max="20" data-label="Look 04">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 05 / CU-005: 质感简约梭织长裤</h4>
+                <div id="look-5-cu-005" class="image-area clickable" data-max="20" data-label="Look 05">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 06 / UT-001: 仿皮风衣夹克</h4>
+                <div id="look-6-ut-001" class="image-area clickable" data-max="20" data-label="Look 06">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 07 / UT-002: 风道通风结构防晒服</h4>
+                <div id="look-7-ut-002" class="image-area clickable" data-max="20" data-label="Look 07">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 08 / UT-003: 可收纳领子防晒服</h4>
+                <div id="look-8-ut-003" class="image-area clickable" data-max="20" data-label="Look 08">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 2: RE -->
+    <div id="tab-re" class="tab-content">
+         <div class="look-grid" id="grid-re">
+            <div class="look-item">
+                <h4>LOOK 09 / RE-001: Cargo 工装炮弹裤</h4>
+                <div id="look-9-re-001" class="image-area clickable" data-max="20" data-label="Look 09">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 10 / RE-002: 巴恩风棉服夹克</h4>
+                <div id="look-10-re-002" class="image-area clickable" data-max="20" data-label="Look 10">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 11 / RE-003: 擦色PU可拆卸毛领羽绒服</h4>
+                <div id="look-11-re-003" class="image-area clickable" data-max="20" data-label="Look 11">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 12 / RE-004: 机车结构PU皮夹克</h4>
+                <div id="look-12-re-004" class="image-area clickable" data-max="20" data-label="Look 12">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 13 / RE-005: 军装风格麂皮绒棉服</h4>
+                <div id="look-13-re-005" class="image-area clickable" data-max="20" data-label="Look 13">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 14 / RE-006: 毛绒帽子卫衣</h4>
+                <div id="look-14-re-006" class="image-area clickable" data-max="20" data-label="Look 14">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 15 / RE-007: 复古学院风运动毛衫</h4>
+                <div id="look-15-re-007" class="image-area clickable" data-max="20" data-label="Look 15">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 16 / RE-008: 羊毛内里擦色PU夹克</h4>
+                <div id="look-16-re-008" class="image-area clickable" data-max="20" data-label="Look 16">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+         </div>
+    </div>
+    
+    <!-- Tab 3: EM -->
+    <div id="tab-em" class="tab-content">
+        <div class="look-grid" id="grid-em">
+            <div class="look-item">
+                <h4>LOOK 17 / EM-001: 仿牛仔水洗外套套装</h4>
+                <div id="look-17-em-001" class="image-area clickable" data-max="20" data-label="Look 17">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 18 / EM-002: 喷染压褶衬衫</h4>
+                <div id="look-18-em-002" class="image-area clickable" data-max="20" data-label="Look 18">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 19 / EM-003: 杜宾拟型帽子卫衣 (流量爆款 IP 潜力)</h4>
+                <div id="look-19-em-003" class="image-area clickable" data-max="20" data-label="Look 19">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 20 / EM-004: 小恶魔丝绒卫衣</h4>
+                <div id="look-20-em-004" class="image-area clickable" data-max="20" data-label="Look 20">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 21 / EM-005: 超柔舒适空气层短裤</h4>
+                <div id="look-21-em-005" class="image-area clickable" data-max="20" data-label="Look 21">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 22 / EM-006: 超柔舒适空气层马甲</h4>
+                <div id="look-22-em-006" class="image-area clickable" data-max="20" data-label="Look 22">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 23 / EM-007: 彩色刺绣T恤</h4>
+                <div id="look-23-em-007" class="image-area clickable" data-max="20" data-label="Look 23">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 24 / EM-008: 棒球拟型毛绒夹克</h4>
+                <div id="look-24-em-008" class="image-area clickable" data-max="20" data-label="Look 24">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 25 / EM-009: 织带拼接大口袋牛仔裤</h4>
+                <div id="look-25-em-009" class="image-area clickable" data-max="20" data-label="Look 25">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 26 / EM-010: 撞色扎花拼色阔腿裤</h4>
+                <div id="look-26-em-010" class="image-area clickable" data-max="20" data-label="Look 26">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 27 / EM-011: 撞色领夹标麂皮绒Polo (基础款升级)</h4>
+                <div id="look-27-em-011" class="image-area clickable" data-max="20" data-label="Look 27">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 28 / EM-012: 杜宾帽子马甲</h4>
+                <div id="look-28-em-012" class="image-area clickable" data-max="20" data-label="Look 28">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 29 / EM-013: 小恶魔丝绒拉链卫衣</h4>
+                <div id="look-29-em-013" class="image-area clickable" data-max="20" data-label="Look 29">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+            <div class="look-item">
+                <h4>LOOK 30 / EM-014: 网眼拼接防晒服</h4>
+                <div id="look-30-em-014" class="image-area clickable" data-max="20" data-label="Look 30">
+                    <div class="placeholder">点击导入该 Look 的 20+ 造型与细节图片</div>
+                    <div class="carousel"></div>
+                    <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+                    <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+                    <div class="counter">0/0</div>
+                </div>
+                <div class="look-analysis"></div>
+            </div>
+        </div>
+    </div>
+
+    </section>
+
+  <!-- 05 数据分析与爆款预测 -->
+  <section id="data" class="section container">
+    <h2>05. DATA ANALYSIS & FASHION ROI</h2>
+    <h3>核心分析：商业可行性与爆款模型</h3>
+    <div class="content-block">
+        <h4>商业分析 (商业可行性与高 ROI 指标)</h4>
+        <p>1. <strong>高转化率模型 (Look 05/21/23)：</strong> 廓形前卫，颜色安全，高转化，高周转率。<strong>适用于大批量跑货。</strong></p>
+        <p>2. <strong>工艺壁垒模型 (Look 09/11/17)：</strong> 高阶水洗、PU 擦色、可拆卸模块化工艺。通过<strong>技术复杂度</strong>建立品牌壁垒，提升产品溢价。</p>
+        <p>3. <strong>社交符号模型 (Look 19/24/29)：</strong> 具象符号驱动话题，<strong>以低成本符号创新</strong>带来极高的话题热度，流量回报高。</p>
+        
+        <h4>爆款预测与商业化路径 (三维爆款矩阵)</h4>
+        <p><strong>预测 1 (销量爆款)：质感梭织长裤 (Look 05)。</strong> 理由：高转化率、高复购率、百搭实穿，可作为<strong>长效基础款</strong>。</p>
+        <p><strong>预测 2 (利润爆款)：擦色PU羽绒服 (Look 11)。</strong> 理由：高客单价、高溢价，工艺壁垒高，<strong>冬季核心利润增长点</strong>。</p>
+        <p><strong>预测 3 (流量爆款)：杜宾拟型帽子卫衣 (Look 19)。</strong> 理由：符号创造驱动话题，是品牌年轻化形象的<strong>流量代表 (IP 联名潜力)</strong>。</p>
+    </div>
+  </section>
+
+  <!-- 06 总结与未来展望 -->
+  <section id="summary" class="section container">
+    <h2>06. SUMMARY & OUTLOOK</h2>
+    <h3>T-C-I 模型收尾：商业战略总结</h3>
+    <div class="content-block">
+        <h4>T - Takeaway (核心洞察):</h4>
+        <p>URBAN VOYAGE 的核心在于通过<strong>“实穿性、趣味性、高品质”</strong>的组合价值来驱动 Z 世代消费。设计理念最终需落地于<strong>商业可行性</strong>。</p>
+        <h4>C - Continuity (连续性与下一季展望):</h4>
+        <p>下一季主题：<strong>POST-ARCHIVE: 数字炼金术</strong>。延续“功能”和“情绪”，侧重于环保再生纤维、仿生肌理面料，以及<strong>可折叠、可收纳</strong>的模块化廓形进化。</p>
+        <h4>I - Impact (商业影响):</h4>
+        <p>通过产品溢价提升 <strong>ARPU (平均用户收益)</strong>；通过独特设计语言建立<strong>差异化壁垒</strong>；吸引更高价值的核心潮流客群，全面实现品牌升级目标。</p>
+    </div>
+  </section>
+
+  <footer class="container" style="padding:40px;border-top:1px solid var(--line);text-align:center;font:600 .8rem ui-monospace;color:#777">
+    SM-PROJECT URBAN VOYAGE END FILE. DESIGNED BY [集].
+  </footer>
+</div>
+
+<!-- 预览层 -->
+<div id="viewer" class="viewer" role="dialog" aria-modal="true">
+  <div class="viewer-box"><img id="viewer-img" alt="preview"/></div>
+</div>
+
+<!-- Toast / Loader -->
+<div id="toast" class="toast"></div>
+<div id="loader" class="loader"><div class="spinner"></div></div>
+
+<!-- 分享链接弹窗 -->
+<div id="shareModal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+    <div class="modal-head">
+      <div id="shareModalTitle" class="modal-title">分享链接</div>
+      <button id="shareModalClose" class="modal-x" title="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <input id="shareModalInput" class="modal-input" readonly value="" />
+      <div class="modal-actions">
+        <button id="shareModalCopy" class="modal-btn">复制链接</button>
+        <a id="shareModalOpen" class="modal-btn ghost" href="#" target="_blank" rel="noreferrer">打开链接</a>
+      </div>
+      <div class="modal-tip">提示：本地 file:// 页面可能无法直接写入剪贴板，已提供手动复制。</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ===== 新增：线上基址（替换为你的 HTTPS 地址） ===== */
+const PUBLIC_BASE_URL = '';
+
+/* ===== 全局状态 ===== */
+const QS = new URLSearchParams(location.search);
+const MODE = (QS.get('mode')==='view') ? 'view':'edit';
+const GIST_ID_PARAM = QS.get('gist') || null;
+
+const LIMIT_PER_SLOT = 20;
+const MAX_FILE_MB = 15;
+const MAX_W = 1600;
+const JPEG_QUALITY = .8;
+
+let imageArchives = {};
+let currentIndex = {};
+let dragSourceAreaId = null;
+let dragSourceIndex = null;
+
+// generate unique portfolio ID for local storage
+let portfolioId = localStorage.getItem('PORTFOLIO_ID') || genId();
+localStorage.setItem('PORTFOLIO_ID', portfolioId);
+const STORAGE_KEY = 'NEO_ARCHIVE_DATA_v3';
+const TOKEN_KEY = 'GIST_TOKEN';
+const GIST_ID_KEY = 'GIST_ID';
+let syncInFlight = false;
+
+/* ===== 工具函数 ===== */
+function genId(){return 'P'+Math.random().toString(36).slice(2,10)}
+function $(sel,ctx=document){return ctx.querySelector(sel)}
+function $$(sel,ctx=document){return Array.from(ctx.querySelectorAll(sel))}
+function toast(msg,ms=1800){
+  const t=document.createElement('div');
+  t.className='t';
+  t.textContent=msg;
+  $('#toast').appendChild(t);
+  setTimeout(()=>t.remove(),ms);
+}
+function loader(on){$('#loader').classList.toggle('active',!!on)}
+function setStatus(txt){const el=$('#sync-status');if(el)el.textContent=txt;}
+function debounce(fn,ms){let t;return function(...args){clearTimeout(t);t=setTimeout(()=>fn.apply(this,args),ms)}}
+
+/* 文件验证 */
+const okTypes = ['image/jpeg','image/png','image/webp','image/gif'];
+function validateFiles(files){
+  const out=[];
+  for(const f of files){
+    if(!okTypes.includes(f.type)){toast(`已忽略不支持类型：${f.name}`);continue;}
+    if(f.size > MAX_FILE_MB*1024*1024){toast(`超过 ${MAX_FILE_MB}MB：${f.name}`);continue;}
+    out.push(f);
+  }
+  return out;
+}
+
+/* 压缩到 1600px 宽，质量80%（PNG/GIF→JPEG；保留WebP） */
+async function compressFile(file){
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, MAX_W / bitmap.width);
+  const w = Math.round(bitmap.width * scale);
+  const h = Math.round(bitmap.height * scale);
+  const canvas = new OffscreenCanvas(w,h);
+  const ctx = canvas.getContext('2d',{alpha:false});
+  ctx.drawImage(bitmap,0,0,w,h);
+  const mime = file.type==='image/webp' ? 'image/webp' : 'image/jpeg';
+  const blob = await canvas.convertToBlob({type:mime, quality:JPEG_QUALITY});
+  const buf = await blob.arrayBuffer();
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const dataUrl = `data:${mime};base64,${base64}`;
+  return {src:dataUrl,w,h,name:file.name};
+}
+
+/* 本地存取/分享/Gist API */
+function saveLocal(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({portfolioId,imageArchives,version:'3.4',ts:Date.now()}));
+    toast('已保存到本地浏览器存储'); 
+  }catch(e){
+    console.error('Local storage save failed:', e);
+    toast('本地保存失败！数据可能超出浏览器存储限制，请使用云端同步。'); 
+  }
+}
+
+function loadLocal(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return false;
+  try{
+    const obj=JSON.parse(raw);
+    if(obj && obj.imageArchives){
+      imageArchives=obj.imageArchives;
+      return true;
+    }
+  }catch(e){console.error(e)}
+  return false;
+}
+
+function genShareUrl(gistId){
+  const usePublic = (location.protocol==='file:' || /localhost|127\.0\.0\.1/.test(location.host));
+  const base = usePublic ? PUBLIC_BASE_URL : (location.origin + location.pathname);
+  const url = new URL(base);
+  url.searchParams.set('mode','view');
+  if(gistId) url.searchParams.set('gist', gistId);
+  return url.toString();
+}
+
+async function ensureGist(data){
+  const token = (localStorage.getItem(TOKEN_KEY) || '').trim();
+  if(!token) throw new Error('未配置 GitHub Token（需要 gist 权限）');
+
+  // 优先使用已保存的 gistId；若 URL 带 gist 参数且本地未保存，也可作为目标
+  let gistId = (localStorage.getItem(GIST_ID_KEY) || '').trim() || (GIST_ID_PARAM || null);
+
+  if(!data || typeof data !== 'object') throw new Error('无效的数据格式');
+
+  const body = {
+    description:`URBAN VOYAGE ${portfolioId}`,
+    files:{['archive_'+portfolioId+'.json']:{content:JSON.stringify(data)}},
+    public:false
+  };
+
+  const headers={
+    'Authorization':`token ${token}`,
+    'Accept':'application/vnd.github+json',
+    'Content-Type':'application/json'
+  };
+
+  // 尝试更新；若 404（不存在/无权限/错 id）则自动转为新建
+  if(gistId){
+    const res = await fetch(`https://api.github.com/gists/${gistId}`,{
+      method:'PATCH', headers, body:JSON.stringify(body)
+    });
+
+    if(res.ok){
+      // 确保本地缓存一致
+      localStorage.setItem(GIST_ID_KEY, gistId);
+      return gistId;
+    }
+
+    // 404：Gist 不存在或不可访问（GitHub 会用 404 隐藏无权限资源）
+    if(res.status === 404){
+      localStorage.removeItem(GIST_ID_KEY);
+      gistId = null;
+    }else{
+      const err = await res.text();
+      throw new Error(`更新 Gist 失败: ${res.status} ${err}`);
+    }
+  }
+
+  // 新建
+  const res = await fetch('https://api.github.com/gists',{
+    method:'POST', headers, body:JSON.stringify(body)
+  });
+  if(!res.ok){
+    const err = await res.text();
+    // 401/403 常见：Token 无效或没勾选 gist 权限
+    throw new Error(`创建 Gist 失败: ${res.status} ${err}`);
+  }
+  const js = await res.json();
+  localStorage.setItem(GIST_ID_KEY, js.id);
+  return js.id;
+}
+
+async function fetchGist(gistId){
+  const res = await fetch(`https://api.github.com/gists/${gistId}`);
+  if(!res.ok) throw new Error(`加载 Gist 失败: ${res.status}`);
+  const js = await res.json();
+  const file = Object.values(js.files).find(f=>f.filename.startsWith('archive_') && f.filename.endsWith('.json'));
+  if(!file) throw new Error('档案文件缺失');
+  const content = await (await fetch(file.raw_url)).text();
+  return JSON.parse(content);
+}
+
+/* 渲染槽位内容 */
+function renderArea(areaId){
+  const area = document.getElementById(areaId);
+  if(!area) return;
+  const list = imageArchives[areaId] || [];
+  const car = area.querySelector('.carousel');
+  const counter = area.querySelector('.counter');
+  const ph = area.querySelector('.placeholder');
+  ph.style.display = list.length? 'none':'block';
+  car.innerHTML = '';
+  car.style.transform = 'translateX(0)';
+  currentIndex[areaId] = Math.min(currentIndex[areaId]||0, Math.max(0,list.length-1));
+  for(let i=0;i<list.length;i++){
+    const f = document.createElement('div');
+    f.className='frame';
+    const img = document.createElement('img');
+    img.loading='lazy';
+    img.src = list[i].src;
+    img.alt = list[i].name || 'image';
+    img.addEventListener('click',e=>{
+      e.stopPropagation();
+      openViewer(list[i].src);
+    });
+    f.appendChild(img);
+    car.appendChild(f);
+  }
+  updateCounter(areaId);
+  updateThumbbar(areaId);
+  updateNavVisibility(areaId);
+  updateCountBadge(areaId);
+  gotoIndex(areaId, currentIndex[areaId]||0);
+}
+
+function updateCounter(areaId){
+  const area = document.getElementById(areaId);
+  if(!area) return;
+  const list = imageArchives[areaId]||[];
+  const idx = currentIndex[areaId]||0;
+  area.querySelector('.counter').textContent = `${list.length? (idx+1):0}/${list.length}`;
+}
+
+function updateNavVisibility(areaId){
+  const area = document.getElementById(areaId);
+  if(!area) return;
+  const hasMany = (imageArchives[areaId]||[]).length>1;
+  area.querySelector('.navbtn.prev').style.display = hasMany?'block':'none';
+  area.querySelector('.navbtn.next').style.display = hasMany?'block':'none';
+}
+
+/* 轮播移动 */
+function gotoIndex(areaId, idx){
+  const area = document.getElementById(areaId);
+  if(!area) return;
+  const car = area.querySelector('.carousel');
+  const list = imageArchives[areaId]||[];
+  if(!list.length) return;
+  if(idx<0) idx = list.length-1;
+  if(idx>=list.length) idx=0;
+  currentIndex[areaId]=idx;
+  const w = area.clientWidth;
+  car.style.transform = `translateX(-${idx * w}px)`;
+  updateCounter(areaId);
+  highlightThumb(areaId, idx);
+}
+
+/* 缩略与管理 */
+function updateThumbbar(areaId){
+  const mgr = document.querySelector(`.manager[data-for="${areaId}"]`);
+  if(!mgr) return;
+  const bar = mgr.querySelector('.thumbbar');
+  const list = imageArchives[areaId]||[];
+  bar.innerHTML='';
+  list.forEach((it,i)=>{
+    const th = document.createElement('div');
+    th.className='thumb';
+    th.draggable = (MODE==='edit');
+    th.dataset.index = i;
+    th.dataset.areaId = areaId;
+    const img = document.createElement('img');
+    img.loading='lazy';
+    img.src=it.src;
+    th.appendChild(img);
+    if(MODE==='edit'){
+      const han = document.createElement('div');
+      han.className='handle';
+      han.textContent='拖拽';
+      th.appendChild(han);
+      const act = document.createElement('div');
+      act.className='act';
+      const bPrev=document.createElement('button');
+      bPrev.className='icon';
+      bPrev.textContent='↑';
+      bPrev.title='上移';
+      bPrev.onclick=e=>{e.stopPropagation();moveItem(areaId,i,-1)};
+      const bNext=document.createElement('button');
+      bNext.className='icon';
+      bNext.textContent='↓';
+      bNext.title='下移';
+      bNext.onclick=e=>{e.stopPropagation();moveItem(areaId,i,1)};
+      const bCover=document.createElement('button');
+      bCover.className='icon';
+      bCover.textContent='封';
+      bCover.title='设为封面';
+      bCover.onclick=e=>{e.stopPropagation();setCover(areaId,i)};
+      const bDel=document.createElement('button');
+      bDel.className='icon';
+      bDel.textContent='删';
+      bDel.title='删除';
+      bDel.onclick=e=>{e.stopPropagation();delItem(areaId,i)};
+      act.append(bPrev,bNext,bCover,bDel);
+      th.appendChild(act);
+      th.addEventListener('dragstart',e=>{
+        dragSourceAreaId = areaId;
+        dragSourceIndex = i;
+        th.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      th.addEventListener('dragend',e=>{
+        th.classList.remove('dragging');
+        dragSourceAreaId = null;
+        dragSourceIndex = null;
+      });
+      th.addEventListener('dragover',e=>{
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if(dragSourceAreaId === areaId){
+          th.classList.add('drag-over');
+        }
+      });
+      th.addEventListener('dragleave',e=>{ th.classList.remove('drag-over') });
+      th.addEventListener('drop',e=>{
+        e.preventDefault();
+        th.classList.remove('drag-over');
+        if(dragSourceAreaId === areaId && dragSourceIndex !== null){
+          const toIndex = parseInt(th.dataset.index);
+          reorder(areaId, dragSourceIndex, toIndex);
+        }
+      });
+    }
+    if(it.cover){
+      const cv=document.createElement('div');
+      cv.className='cover-badge';
+      cv.textContent='封面';
+      th.appendChild(cv);
+    }
+    th.addEventListener('click',e=>{
+      if(!e.target.classList.contains('icon')){
+        gotoIndex(areaId,i);
+      }
+    });
+    bar.appendChild(th);
+  });
+  highlightThumb(areaId, currentIndex[areaId]||0);
+}
+
+function highlightThumb(areaId, idx){
+  const mgr = document.querySelector(`.manager[data-for="${areaId}"]`);
+  if(!mgr) return;
+  $$('.thumb',mgr).forEach((n,i)=>n.style.outline = (i===idx)?'2px solid var(--acc)':'none');
+}
+
+function moveItem(areaId,i,delta){
+  const list = imageArchives[areaId];
+  if(!list || !list.length) return;
+  const j = i+delta;
+  if(j<0||j>=list.length) return;
+  [list[i],list[j]]=[list[j],list[i]];
+  currentIndex[areaId]=j;
+  renderArea(areaId);
+}
+
+function setCover(areaId,i){
+  const list = imageArchives[areaId];
+  if(!list || !list.length) return;
+  const [it] = list.splice(i,1);
+  list.forEach(x=>x.cover=false);
+  it.cover = true;
+  list.unshift(it);
+  currentIndex[areaId]=0;
+  renderArea(areaId);
+}
+
+function delItem(areaId,i){
+  if(!confirm('确定要删除这张图片吗？')) return;
+  const list = imageArchives[areaId];
+  if(!list || !list.length) return;
+  list.splice(i,1);
+  currentIndex[areaId]=Math.min(currentIndex[areaId]||0, Math.max(0,list.length-1));
+  renderArea(areaId);
+}
+
+function reorder(areaId,from,to){
+  if(from===to) return;
+  const list=imageArchives[areaId];
+  if(!list || !list.length) return;
+  const [it]=list.splice(from,1);
+  list.splice(to,0,it);
+  currentIndex[areaId]=to;
+  renderArea(areaId);
+}
+
+function updateCountBadge(areaId){
+  const el = document.getElementById(`count-${areaId}`);
+  if(el) el.textContent = `数量: ${(imageArchives[areaId]||[]).length}`;
+}
+
+/* 上传处理 */
+async function addFilesToArea(areaId, files){
+  const area = document.getElementById(areaId);
+  if(!area) return;
+  const max = +area.dataset.max || LIMIT_PER_SLOT;
+  const list = imageArchives[areaId] || (imageArchives[areaId]=[]);
+  const valid = validateFiles(files);
+  if(!valid.length) return;
+  const quota = max - list.length;
+  if(quota <= 0){ toast(`已达上限 ${max} 张`); return; }
+  if(valid.length > quota){ toast(`超过上限，只添加前 ${quota} 张`); }
+  loader(true);
+  try{
+    const tasks = valid.slice(0,quota).map(f=>compressFile(f));
+    const res = await Promise.all(tasks);
+    res.forEach((r,idx)=>list.push({
+      id:genId(), src:r.src, name:r.name, w:r.w, h:r.h, cover:(list.length===0 && idx===0)
+    }));
+    renderArea(areaId);
+    toast(`已添加 ${res.length} 张`);
+  }catch(e){
+    console.error(e);
+    toast('处理图片失败');
+  }
+  loader(false);
+}
+
+/* 文件初始化绑定 */
+function bindArea(area){
+  const id = area.id;
+  imageArchives[id] = imageArchives[id] || [];
+  currentIndex[id] = 0;
+  if(MODE==='edit'){
+    area.addEventListener('click',e=>{
+      if(e.target.classList.contains('navbtn')) return;
+      if(e.target.tagName==='IMG') return;
+      pickFiles(id);
+    });
+  }
+  area.addEventListener('dragover',e=>{
+    e.preventDefault();
+    if(MODE==='edit'){ area.style.borderColor='var(--acc)'; }
+  });
+  area.addEventListener('dragleave',()=>{ area.style.borderColor='#3a3a3a' });
+  area.addEventListener('drop',async e=>{
+    e.preventDefault();
+    area.style.borderColor='#3a3a3a';
+    if(MODE!=='edit') return;
+    const files = [...e.dataTransfer.files];
+    if(files.length) await addFilesToArea(id, files);
+  });
+  area.querySelector('.navbtn.prev').addEventListener('click',e=>{
+    e.stopPropagation(); gotoIndex(id, (currentIndex[id]||0)-1);
+  });
+  area.querySelector('.navbtn.next').addEventListener('click',e=>{
+    e.stopPropagation(); gotoIndex(id, (currentIndex[id]||0)+1);
+  });
+  const mgr = document.querySelector(`.manager[data-for="${id}"]`);
+  if(!mgr) return;
+  const input = $('input[type="file"]', mgr);
+  $('[data-act="upload"]',mgr)?.addEventListener('click',()=>pickFiles(id));
+  input?.addEventListener('change',e=>{
+    if(e.target.files?.length){ addFilesToArea(id, e.target.files); input.value=''; }
+  });
+  $('[data-act="set-cover"]',mgr)?.addEventListener('click',()=>{
+    const list = imageArchives[id]; if(list && list.length) setCover(id, currentIndex[id]||0);
+  });
+  $('[data-act="move-up"]',mgr)?.addEventListener('click',()=>{
+    const list = imageArchives[id]; if(list && list.length) moveItem(id, currentIndex[id]||0, -1);
+  });
+  $('[data-act="move-down"]',mgr)?.addEventListener('click',()=>{
+    const list = imageArchives[id]; if(list && list.length) moveItem(id, currentIndex[id]||0, 1);
+  });
+  $('[data-act="del"]',mgr)?.addEventListener('click',()=>{
+    const list = imageArchives[id]; if(list && list.length) delItem(id, currentIndex[id]||0);
+  });
+  renderArea(id);
+  if(MODE==='view'){ mgr.style.display='none'; }
+}
+
+function pickFiles(areaId){
+  const mgr = document.querySelector(`.manager[data-for="${areaId}"]`);
+  if(!mgr) return;
+  const input = $('input[type="file"]', mgr);
+  if(input) input.click();
+}
+
+/* 填充 Look 分析内容到每个 look-analysis 容器 */
+function fillLookAnalyses(){
+  const analysisMap = {
+    'look-1-cu-001': `<p><strong>档案编号：</strong>CU-001</p><p><strong>设计叙事：</strong> 极致 A 字气球廓形，斜纹肌理注入高级感。通过复杂剪裁实现<strong>结构化松弛</strong>，强调<strong>舒适和体量感</strong>。</p><p><strong>商业价值：</strong> <strong>廓形视觉锚点</strong>，高辨识度廓形拉动基础款销量，高品质面料支撑合理溢价。</p>`,
+    'look-2-cu-002': `<p><strong>档案编号：</strong>CU-002</p><p><strong>设计叙事：</strong> 短款 Boxy Fit，高领提供“数字茧房”情绪。浅雾紫色调。</p><p><strong>商业价值：</strong> <strong>跨性别冬季爆款</strong>，高饱和色提升社媒曝光，实现高价值中性化销售。</p>`,
+    'look-3-cu-003': `<p><strong>档案编号：</strong>CU-003</p><p><strong>设计叙事：</strong> 复古运动解构，<strong>中式盘扣符号嫁接</strong>。宽廓形实现文化冲突美学。</p><p><strong>商业价值：</strong> <strong>国潮创新范例</strong>，用符号冲突制造高话题性，扩大品牌声量。</p>`,
+    'look-4-cu-004': `<p><strong>档案编号：</strong>CU-004</p><p><strong>设计叙事：</strong> 短宽体廓形，<strong>荧光滚边勾勒机能线条</strong>。模块化保暖与未来复古。</p><p><strong>商业价值：</strong> <strong>功能溢价驱动</strong>，设计复杂度支持更高客单价，属于形象款中偏实穿的类型。</p>`,
+    'look-5-cu-005': `<p><strong>档案编号：</strong>CU-005</p><p><strong>设计叙事：</strong> 宽直筒，梭织面料高垂坠感，正装褶裥。强调<strong>舒适和质感的基本款</strong>。</p><p><strong>商业价值：</strong> <strong>高转化“销量底裤”</strong>，高转化率，以<strong>材质升级</strong>提升利润率，适合大规模推广。</p>`,
+    'look-6-ut-001': `<p><strong>档案编号：</strong>UT-001</p><p><strong>设计叙事：</strong> 仿麂皮面料，高立领和廓形剪裁。功能性外观潮流化，适合多场景穿搭。</p><p><strong>商业价值：</strong> 提升外套的设计溢价和潮流调性，目标追求<strong>轻奢质感</strong>的客群。</p>`,
+    'look-7-ut-002': `<p><strong>档案编号：</strong>UT-002</p><p><strong>设计叙事：</strong> 背部<strong>风道结构</strong>，短款宽松廓形。功能性符号的审美化，强调<strong>城市户外保护</strong>。</p><p><strong>商业价值：</strong> 功能性升级的潮流爆款，<strong>科技感和实用性</strong>兼备，实现防晒服的溢价。</p>`,
+    'look-8-ut-003': `<p><strong>档案编号：</strong>UT-003</p><p><strong>设计叙事：</strong> 可收纳领子，轻薄茧型廓形。实现从连帽到立领的形态转换，<strong>易于收纳携带</strong>。</p><p><strong>商业价值：</strong> <strong>模块化功能核心</strong>，通过形态转换增加产品多穿性，提高性价比和功能性。</p>`,
+    'look-9-re-001': `<p><strong>档案编号：</strong>RE-001</p><p><strong>设计叙事：</strong> 极度颓废做旧水洗，超宽廓形，多口袋解构。借鉴 Diesel 高阶做旧工艺。</p><p><strong>商业价值：</strong> <strong>形象款</strong>，提升丹宁工装的<strong>产品附加值和调性</strong>，通过做旧肌理引领趋势。</p>`,
+    'look-10-re-002': `<p><strong>档案编号：</strong>RE-002</p><p><strong>设计叙事：</strong> 重度石洗丹宁肌理，短款 Bomber 廓形。巴恩风辅料，营造<strong>Y2K 颓废感</strong>。</p><p><strong>商业价值：</strong> <strong>冬季高溢价形象单品</strong>，通过独特的五金和水洗工艺，建立设计壁垒。</p>`,
+    'look-11-re-003': `<p><strong>档案编号：</strong>RE-003</p><p><strong>设计叙事：</strong> 擦色 PU 模拟旧皮革，可拆卸毛领 Bomber 版型。<strong>模块化重工外套</strong>。</p><p><strong>商业价值：</strong> <strong>核心高价值利润爆款</strong>，实现“一衣多穿”和“奢华感”的双重溢价。</p>`,
+    'look-12-re-004': `<p><strong>档案编号：</strong>RE-004</p><p><strong>设计叙事：</strong> 军绿做旧 PU，赛车结构拼接。重工皮衣档案感，强调<strong>结构和力量</strong>。</p><p><strong>商业价值：</strong> <strong>高工艺要求</strong>，打造硬核潮流的品牌形象，吸引追求<strong>机能复古</strong>的客群。</p>`,
+    'look-13-re-005': `<p><strong>档案编号：</strong>RE-005</p><p><strong>设计叙事：</strong> 麂皮绒做旧肌理，军装雨挡式结构。提升军工档案的<strong>奢华感和冬季保暖性</strong>。</p><p><strong>商业价值：</strong> <strong>材质提升调性</strong>，锁定更高价值客群，是秋冬季的<strong>高级感形象款</strong>。</p>`,
+    'look-14-re-006': `<p><strong>档案编号：</strong>RE-006</p><p><strong>设计叙事：</strong> 重磅卫衣做旧，可拆卸长毛绒帽子。俄式重工与卫衣的融合。</p><p><strong>商业价值：</strong> <strong>冬季极致情绪单品</strong>，模块化设计提供“一衣两穿”的销售卖点。</p>`,
+    'look-15-re-007': `<p><strong>档案编号：</strong>RE-007</p><p><strong>设计叙事：</strong> 粗粝毛感肌理，复古运动符号与 Polo 领解构。学院颓废风的<strong>软化表达</strong>。</p><p><strong>商业价值：</strong> <strong>针织品类差异化创新</strong>，高附加值，适合在校园场景推广。</p>`,
+    'look-16-re-008': `<p><strong>档案编号：</strong>RE-008</p><p><strong>设计叙事：</strong> 擦色PU外层，羊毛内衬，连帽可拆卸。极地奢华感，强调<strong>冬季强保暖</strong>。</p><p><strong>商业价值：</strong> <strong>冬季最高端 SKU</strong>，强调舒适与强悍的视觉冲突，支撑最高利润率。</p>`,
+    'look-17-em-001': `<p><strong>档案编号：</strong>EM-001</p><p><strong>设计叙事：</strong> 极致渐变水洗，可拆卸背心/披肩解构。颓废丹宁形象款，<strong>艺术化工艺</strong>。</p><p><strong>商业价值：</strong> 以<strong>高难度水洗工艺</strong>建立壁垒，提升品牌丹宁价值，<strong>高视觉形象</strong>。</p>`,
+    'look-18-em-002': `<p><strong>档案编号：</strong>EM-002</p><p><strong>设计叙事：</strong> 喷染渐变色，压褶肌理，营造<strong>“数字模糊”情绪</strong>。艺术化衬衫，强调层次感。</p><p><strong>商业价值：</strong> 衬衫品类的<strong>工艺升级</strong>，实现高附加值的艺术表达，适合小众潮人。</p>`,
+    'look-19-em-003': `<p><strong>档案编号：</strong>EM-003</p><p><strong>设计叙事：</strong> 杜宾/猫耳拟人化符号（可替换为森马 IP 形象），重磅超廓形。具象的情绪表达。</p><p><strong>商业价值：</strong> <strong>社交媒体核弹/IP流量爆款</strong>，以具象符号驱动话题和流量爆发，<strong>KOL 易推广</strong>。</p>`,
+    'look-20-em-004': `<p><strong>档案编号：</strong>EM-004</p><p><strong>设计叙事：</strong> 丝绒内衬与恶魔角符号的结合。叛逆情绪的具象表达，高价值感触觉。</p><p><strong>商业价值：</strong> <strong>高价值感材质</strong>提升卫衣品级，是秋冬卫衣中的<strong>形象差异化单品</strong>。</p>`,
+    'look-21-em-005': `<p><strong>档案编号：</strong>EM-005</p><p><strong>设计叙事：</strong> 复古田径短裤廓形，<strong>空气层面料</strong>。夏季短裤舒适升级。</p><p><strong>商业价值：</strong> <strong>销量爆款</strong>。复古符号提升夏季短裤溢价，中性搭配拓宽客群。</p>`,
+    'look-22-em-006': `<p><strong>档案编号：</strong>EM-006</p><p><strong>设计叙事：</strong> 短款马甲，空气层面料，几何绗缝，<strong>叠穿核心</strong>。强调舒适模块化。</p><p><strong>商业价值：</strong> <strong>跨季节叠穿关键 SKU</strong>，提升秋冬连带销售，高普适性。</p>`,
+    'look-23-em-007': `<p><strong>档案编号：</strong>EM-007</p><p><strong>设计叙事：</strong> 基础T恤廓形，彩色刺绣点缀。以小细节提升价值感。</p><p><strong>商业价值：</strong> <strong>基础款高附加值</strong>，以低成本的细节创新提升夏季毛利。</p>`,
+    'look-24-em-008': `<p><strong>档案编号：</strong>EM-008</p><p><strong>设计叙事：</strong> 棒球缝线拟物化刺绣，毛绒面料。高话题性拟物设计，强调趣味性。</p><p><strong>商业价值：</strong> <strong>品牌形象旗舰款</strong>，拟物化设计创造收藏价值，提升品牌创意度。</p>`,
+    'look-25-em-009': `<p><strong>档案编号：</strong>EM-009</p><p><strong>设计叙事：</strong> 丹宁侧边拼接运动条纹，颓废与运动符号融合。<strong>城市运动解构</strong>。</p><p><strong>商业价值：</strong> <strong>运动档案解构</strong>的最佳商业化落地，多元素混搭，流量潜力大。</p>`,
+    'look-26-em-010': `<p><strong>档案编号：</strong>EM-010</p><p><strong>设计叙事：</strong> 扎花水洗颓废丹宁，侧边红白运动条纹。<strong>高阶工艺</strong>与复古的结合。</p><p><strong>商业价值：</strong> <strong>最大化连带销售</strong>（可搭配 Look 10 夹克），高难度扎花工艺支撑溢价。</p>`,
+    'look-27-em-011': `<p><strong>档案编号：</strong>EM-011</p><p><strong>设计叙事：</strong> 麂皮绒材质，撞色 Polo 领。将 Polo 衫提升至<strong>轻奢学院风</strong>。</p><p><strong>商业价值：</strong> <strong>基础款升级</strong>，高价值材质驱动溢价，拓宽校园和商务休闲客群。</p>`,
+    'look-28-em-012': `<p><strong>档案编号：</strong>EM-012</p><p><strong>设计叙事：</strong> 杜宾耳拟人化符号，战术马甲结构。<strong>跨季节情绪战甲</strong>。</p><p><strong>商业价值：</strong> <strong>高流量和高连带销售潜力</strong>，无袖设计适用于多种叠穿。</p>`,
+    'look-29-em-013': `<p><strong>档案编号：</strong>EM-013</p><p><strong>设计叙事：</strong> 丝绒内衬，小恶魔角符号。<strong>趣味性 IP 符号设计</strong>，卫衣品类形象代表。</p><p><strong>商业价值：</strong> 符号叛逆表达，高价值材质碰撞，卫衣品类形象代表。</p>`,
+    'look-30-em-014': `<p><strong>档案编号：</strong>EM-014</p><p><strong>设计叙事：</strong> V形网眼拼接，高防护面罩式领口。<strong>科技美学代表</strong>，增强防护功能。</p><p><strong>商业价值：</strong> 科技美学代表，以高防护功能性细节驱动溢价，<strong>提升夏季功能品类销售</strong>。</p>`
+  };
+  $$('.look-analysis').forEach(div=>{
+    const parent = div.closest('.look-item');
+    if(parent){
+      const area = parent.querySelector('.image-area');
+      if(area && analysisMap[area.id]){
+        div.innerHTML = analysisMap[area.id];
+      }
+    }
+  });
+}
+
+/* 为每个 look 创建管理器控件（如果尚不存在） */
+function ensureManagers(){
+  document.querySelectorAll('.image-area').forEach(area=>{
+    const id = area.id;
+    if(!id || id === 'moodboard-area') return;
+    // 如果下一个兄弟元素已是 manager，则跳过
+    const next = area.nextElementSibling;
+    if(next && next.classList && next.classList.contains('manager')) return;
+    const mgr = document.createElement('div');
+    mgr.className = 'manager';
+    mgr.dataset.for = id;
+    mgr.innerHTML = `
+      <button class="mbtn" data-act="upload">上传</button>
+      <button class="mbtn" data-act="set-cover">设为封面</button>
+      <button class="mbtn" data-act="move-up">上移</button>
+      <button class="mbtn" data-act="move-down">下移</button>
+      <button class="mbtn" data-act="del">删除</button>
+      <span class="badge" id="count-${id}">数量: 0</span>
+      <input type="file" accept="image/*" multiple hidden/>
+      <div class="thumbbar" draggable="false"></div>
+    `;
+    area.insertAdjacentElement('afterend', mgr);
+  });
+}
+
+/* 预览层 */
+function openViewer(src){
+  const v = $('#viewer');
+  $('#viewer-img').src=src;
+  v.classList.add('active');
+}
+function closeViewer(){ $('#viewer').classList.remove('active'); }
+
+/* Scrollspy / 导航 */
+function bindNav(){
+  $$('#main-nav .nav-link').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      const id = a.getAttribute('href').slice(1);
+      const tgt = document.getElementById(id);
+      if(tgt){
+        const offset = document.body.style.paddingLeft ? 0 : 60;
+        window.scrollTo({top:tgt.offsetTop-offset,behavior:'smooth'});
+      }
+    });
+  });
+  const ids = ['strategy','market','trends','lookbook','data','summary'];
+  function spy(){
+    let active='';
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el){
+        const r = el.getBoundingClientRect();
+        if(r.top<=120) active=id;
+      }
+    });
+    $$('#main-nav .nav-link').forEach(a=>{
+      a.classList.toggle('active', a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',debounce(spy,100),{passive:true});
+  spy();
+}
+
+/* 标签页 */
+function bindTabs(){
+  $$('.tab-button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      $$('.tab-button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const tab = b.dataset.tab;
+      $$('.tab-content').forEach(x=>x.classList.remove('active'));
+      const tabEl = $('#'+tab);
+      if(tabEl){
+        tabEl.classList.add('active');
+        $$('.image-area', tabEl).forEach(area=>renderArea(area.id));
+      }
+    });
+  });
+}
+
+/* 模式控制 */
+function applyMode(){
+  if(MODE==='edit'){
+    $('#toolbar').hidden=false;
+    $('#mode-badge').textContent='edit';
+  }else{
+    $('#toolbar').hidden=true;
+    $$('.manager').forEach(m=>m.style.display='none');
+  }
+}
+
+/* 快捷键 */
+function bindKeys(){ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeViewer(); }); }
+
+/* 同步与分享 */
+async function doSync(){
+  if(syncInFlight){ toast('同步进行中...'); return null; }
+  try{
+    syncInFlight=true; setStatus('同步中…'); loader(true);
+    const data = { portfolioId, imageArchives, version:'3.4', ts:Date.now() };
+    const id = await ensureGist(data);
+    setStatus('已同步 ✓'); toast('云端同步完成'); return id;
+  }catch(err){
+    console.error(err); setStatus('同步失败'); 
+    if (err.message.includes('GitHub Token')) {
+      toast('同步失败：请先配置 GitHub Token！', 3500); 
+      askToken();
+    } else {
+      toast(err.message||'同步失败');
+    }
+    return null;
+  }finally{ syncInFlight=false; loader(false); }
+}
+
+async function copyTextSafe(text){
+  // 优先 Clipboard API（需要 https 或 localhost；file:// 常失败）
+  if(navigator.clipboard && window.isSecureContext){
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+  // 兼容 file:// 的降级方案：临时 textarea + execCommand
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.setAttribute('readonly','');
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  ta.style.top='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, ta.value.length);
+  let ok=false;
+  try{ ok=document.execCommand('copy'); }catch(e){ ok=false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+
+function openShareModal(url){
+  const modal = $('#shareModal');
+  const input = $('#shareModalInput');
+  const openA = $('#shareModalOpen');
+  input.value = url;
+  openA.href = url;
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  // 自动选中，方便手动复制
+  setTimeout(()=>{ input.focus(); input.select(); }, 0);
+}
+
+async function doShare(){
+  try{
+    toast('生成分享链接中...');
+    let gistId = localStorage.getItem(GIST_ID_KEY);
+    if(!gistId){
+      toast('未检测到云端版本，正在尝试先同步...');
+      gistId = await doSync();
+    }
+    if(!gistId){
+      toast('无法生成分享链接：云端同步未完成。', 3200);
+      return;
+    }
+    const url = genShareUrl(gistId);
+
+    // 弹窗永远给到用户“可见反馈”
+    openShareModal(url);
+
+    // 尝试自动复制（成功/失败都给提示）
+    const ok = await copyTextSafe(url);
+    toast(ok ? '分享链接已复制' : '已生成链接（请在弹窗中手动复制）', 2600);
+  }catch(err){
+    console.error(err);
+    toast('生成分享链接失败：' + (err?.message || '未知错误'), 3500);
+  }
+}
+
+/* 配置 Token */
+function askToken(){
+  const cur = localStorage.getItem(TOKEN_KEY) || '';
+  const v = prompt('请输入 GitHub Personal Access Token（gist 权限）\n仅保存在本地浏览器（解决刷新图片丢失问题）：', cur);
+  if(v===null) return;
+  if(v.trim()===''){
+    localStorage.removeItem(TOKEN_KEY);
+    toast('已清除 Token');
+    return;
+  }
+  localStorage.setItem(TOKEN_KEY, v.trim());
+  toast('Token 已保存');
+}
+
+/* 自动加载：本地 or Gist */
+async function bootLoad(){
+  try{
+    if(GIST_ID_PARAM){
+      // 记录分享链接里的 gistId，便于（若切回 edit 模式）继续更新同一个 Gist
+      try{ localStorage.setItem(GIST_ID_KEY, GIST_ID_PARAM); }catch(e){}
+      loader(true); setStatus?.('从 Gist 加载…');
+      const data = await fetchGist(GIST_ID_PARAM);
+      if(data?.imageArchives){
+        imageArchives = data.imageArchives;
+        toast('已加载远程数据');
+      }
+      setStatus?.('已加载'); loader(false);
+    }else{
+      const loaded = loadLocal();
+      if(loaded && MODE==='edit'){ toast('已加载本地数据，请注意数据保存在本地浏览器中'); }
+    }
+  }catch(e){
+    console.error(e); toast('远程加载失败，尝试本地数据');
+    loadLocal(); loader(false);
+  }
+}
+
+/* 绑定所有槽实例 */
+function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
+
+/* 初始化 */
+(async function init(){
+  applyMode();
+  bindTabs();
+  await bootLoad();
+  // 确保每个 look 都有管理控件，再绑定事件
+  ensureManagers();
+  bindAllAreas();
+  bindNav();
+  bindKeys();
+  // fill look analysis content after all areas have been bound
+  fillLookAnalyses();
+  $('#btn-save-local')?.addEventListener('click',()=>{ saveLocal(); });
+  $('#btn-config')?.addEventListener('click',askToken); 
+  $('#btn-sync')?.addEventListener('click',async ()=>{
+    const btn = $('#btn-sync'); btn.disabled = true; await doSync(); btn.disabled = false;
+  });
+  $('#btn-share')?.addEventListener('click',doShare);
+  if(MODE==='edit'){ toast('编辑模式：支持拖拽、排序、云端同步',2500); }
+  else{ toast('查看模式：点击图片可预览',2000); }
+})();
+
+/* 窗口尺寸改变重排（防抖） */
+const handleResize = debounce(()=>{
+  $$('.image-area').forEach(area=>{
+    const id = area.id;
+    const list = imageArchives[id];
+    if(list && list.length){
+      const w = area.clientWidth;
+      const idx = currentIndex[id] || 0;
+      const car = area.querySelector('.carousel');
+      if(car){ car.style.transform = `translateX(-${idx * w}px)`; }
+    }
+  });
+}, 200);
+window.addEventListener('resize', handleResize);
+
+/* 查看层事件 */
+$('#viewer').addEventListener('click',e=>{
+  if(e.target.id==='viewer' || e.target.classList.contains('viewer')){ closeViewer(); }
+});
+$('#viewer-img').addEventListener('click',e=>{ e.stopPropagation(); });
+</script>
 </body>
 </html>
-
