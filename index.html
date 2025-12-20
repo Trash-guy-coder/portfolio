@@ -2,7 +2,13 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--
+      调整 viewport 设置以避免在移动端查看宽图时页面自动放大。
+      指定 maximum-scale=1.0 和 user-scalable=no 可以阻止浏览器在加载宽图或表单元素时
+      自动缩放页面，从而保持页面在手机上的初始比例。
+    -->
+    <!-- 视口设置：保持原始比例，允许用户缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SM-PROJECT | URBAN VOYAGE | DESIGN PORTFOLIO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+SC:wght@100..900&display=swap" rel="stylesheet">
@@ -114,31 +120,149 @@ h1{
 .manager{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .mbtn{padding:6px 8px;border:1px solid #2c2c2c;background:#151515;color:#ddd;border-radius:8px;font-size:.85rem;cursor:pointer;transition:.2s;font-family:inherit}
 .mbtn:hover{background:#202020;border-color:#444}
-.thumbbar{display:flex;gap:8px;overflow:auto;padding:10px;border:1px dashed #333;border-radius:10px;margin-top:12px;min-height:92px}
-.thumb{position:relative;min-width:72px;min-height:72px;border-radius:8px;border:2px solid #2a2a2a;background:#0e0e0e;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;user-select:none}
+.thumbbar{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:10px;
+  border:1px dashed #333;
+  border-radius:10px;
+  margin-top:12px;
+  /* 增加缩略图栏的高度以容纳更高的缩略图（96px）并保留内边距 */
+  height:112px;
+}
+.thumb{
+  position:relative;
+  width:72px;
+  /* 增加缩略图高度，确保竖排按钮有足够点击区域 */
+  height:96px;
+  flex:0 0 auto;
+  border-radius:8px;
+  border:2px solid #2a2a2a;
+  background:#0e0e0e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+  user-select:none;
+}
 .thumb:hover{border-color:#444;transform:scale(1.05)}
 .thumb.dragging{opacity:.5;cursor:grabbing}
 .thumb.drag-over{border-color:var(--acc);background:#1a1a1a}
 .thumb img{max-width:100%;max-height:100%;object-fit:cover;border-radius:7px;pointer-events:none}
 .handle{position:absolute;left:4px;top:4px;background:#202020;border:1px solid #333;color:#bbb;font-size:.7rem;border-radius:6px;padding:2px 6px;cursor:grab;pointer-events:none}
 
-/* FIX: 增大操作按钮点击区域 */
-.act{position:absolute;right:2px;top:2px;display:flex;gap:2px;opacity:0;transition:.2s;z-index:10} /* Z-index added */
+/* 调整缩略图操作按钮的布局：竖直排列避免在窄幅缩略图上横向溢出 */
+.act{
+  position:absolute;
+  right:2px;
+  top:2px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  opacity:0;
+  transition:.2s;
+  z-index:10;
+}
 .thumb:hover .act{opacity:1}
 .act .icon{
-  border:none;background:#00000099;border:1px solid #333;color:#ddd;cursor:pointer;border-radius:6px;
-  padding:4px 6px; /* 增大内边距 */
-  font-size:.8rem; /* 增大字体 */
+  border:none;
+  background:#00000099;
+  border:1px solid #333;
+  color:#ddd;
+  cursor:pointer;
+  border-radius:6px;
+  padding:4px 6px;
+  font-size:.8rem;
   transition:.2s;
-  line-height:1; /* 保持行高一致 */
+  line-height:1;
+  width:auto;
 }
 .act .icon:hover{background:#000;transform:scale(1.1)}
+
+/* 新增上传占位缩略图样式 */
+.thumb.placeholder{
+  width:72px;
+  /* 缩略图占位符与缩略图一致的高度 */
+  height:96px;
+  flex:0 0 auto;
+  border-radius:8px;
+  border:2px dashed #3a3a3a;
+  background:#161616;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#555;
+  font-size:1.5rem;
+  transition:.2s;
+  user-select:none;
+}
+.thumb.placeholder:hover{
+  border-color:#555;
+  color:var(--acc);
+  transform:scale(1.05);
+}
+
+/* 让每个 look-analysis 中文本自动换行并适应容器宽度 */
+.look-analysis {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* 对所有 contenteditable 元素应用文本换行和预格式化属性，确保编辑后的文字能自适应容器宽度 */
+[contenteditable="true"] {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
 .cover-badge{position:absolute;right:4px;bottom:4px;background:var(--acc);color:#000;border-radius:6px;padding:2px 6px;font:800 .7rem ui-monospace;pointer-events:none}
 /* 预览层 */
 .viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out}
 .viewer.active{display:flex}
-.viewer-box{max-width:92vw;max-height:88vh;background:#0f0f0f;border:1px solid #333;border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.5);padding:10px}
-.viewer img{max-width:90vw;max-height:84vh;object-fit:contain;border-radius:8px}
+.viewer-box{
+  /* 固定预览框尺寸：相对于视口，同时设置最大限制，避免图片宽度不同导致预览框大小变化 */
+  width:90vw;
+  height:80vh;
+  max-width:900px;
+  max-height:700px;
+  background:#0f0f0f;
+  border:1px solid #333;
+  border-radius:14px;
+  box-shadow:0 20px 80px rgba(0,0,0,.5);
+  padding:10px;
+}
+.viewer img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:8px;
+}
+/* 预览层导航按钮：左右半透明按钮 */
+.viewer-nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.4);
+  color:#fff;
+  border:none;
+  border-radius:24px;
+  cursor:pointer;
+  z-index:60;
+  font-size:1.5rem;
+  padding:0;
+}
+.viewer-nav:hover{
+  background:rgba(0,0,0,.6);
+}
+#viewer-prev{left:20px;}
+#viewer-next{right:20px;}
 /* Toast/Loader/Media Queries (unchanged) */
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:60;display:grid;gap:8px;pointer-events:none}
 .toast .t{background:#141414;border:1px solid #2e2e2e;color:#ddd;padding:10px 14px;border-radius:12px;font:600 .9rem ui-monospace;animation:slideUp .3s ease}
@@ -157,6 +281,7 @@ h1{
   .nav-link.active{border-bottom-color:var(--acc)}
   header{padding:40px 30px 20px}
   h1{font-size:2rem}
+  /* 移动端缩略图区高度适配，保持固定高度 */
   .frame img{height:240px}
 }
 ::-webkit-scrollbar{height:8px;width:8px}
@@ -649,9 +774,13 @@ h1{
   </footer>
 </div>
 
-<!-- 预览层 -->
+<!-- 预览层：新增左右导航按钮 -->
 <div id="viewer" class="viewer" role="dialog" aria-modal="true">
+  <!-- 左侧导航 -->
+  <button id="viewer-prev" class="viewer-nav" title="上一张">⟵</button>
   <div class="viewer-box"><img id="viewer-img" alt="preview"/></div>
+  <!-- 右侧导航 -->
+  <button id="viewer-next" class="viewer-nav" title="下一张">⟶</button>
 </div>
 
 <!-- Toast / Loader -->
@@ -869,7 +998,8 @@ function renderArea(areaId){
     img.alt = list[i].name || 'image';
     img.addEventListener('click',e=>{
       e.stopPropagation();
-      openViewer(list[i].src);
+      // 打开预览层并支持左右导航
+      openViewerAt(areaId, i);
     });
     f.appendChild(img);
     car.appendChild(f);
@@ -1000,7 +1130,51 @@ function updateThumbbar(areaId){
     });
     bar.appendChild(th);
   });
+  // 如果处于编辑模式且未达到该 Look 的最大允许数量，则追加一个上传占位缩略图
+  try {
+    const area = document.getElementById(areaId);
+    const max = area && area.dataset ? parseInt(area.dataset.max || LIMIT_PER_SLOT) : LIMIT_PER_SLOT;
+    if (MODE === 'edit' && list.length < max) {
+      const ph = document.createElement('div');
+      ph.className = 'thumb placeholder';
+      ph.title = '上传图片';
+      // 使用加号符号提示可以上传
+      ph.textContent = '+';
+      ph.onclick = (e) => {
+        e.stopPropagation();
+        // 触发对应管理器中的文件输入
+        const mgr = document.querySelector(`.manager[data-for="${areaId}"]`);
+        if (mgr) {
+          const input = mgr.querySelector('input[type="file"]');
+          if (input) input.click();
+        }
+      };
+      bar.appendChild(ph);
+    }
+  } catch (err) {
+    console.error(err);
+  }
   highlightThumb(areaId, currentIndex[areaId]||0);
+}
+
+/* 启用全局文本编辑：在编辑模式下为主要内容中的标题、段落等元素增加 contenteditable 属性，以保持原有样式并允许直接编辑 */
+function enableGlobalEditing(){
+  if(MODE !== 'edit') return;
+  // 定义需要启用编辑的选择器列表
+  const selectors = [
+    '.main h2', '.main h3', '.main h4', '.main h5',
+    '.main p', '.main span.archive-tag', '.main .content-block',
+    '.main .section h3', '.main .section p', '.look-analysis'
+  ];
+  selectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      // 避免设置在交互元素（如按钮）上
+      if(el.tagName === 'BUTTON' || el.tagName === 'A' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return;
+      el.setAttribute('contenteditable','true');
+      el.setAttribute('spellcheck','false');
+      el.style.cursor = 'text';
+    });
+  });
 }
 
 function highlightThumb(areaId, idx){
@@ -1197,8 +1371,16 @@ function fillLookAnalyses(){
     if(parent){
       const area = parent.querySelector('.image-area');
       if(area && analysisMap[area.id]){
+        // 设置文本内容
         div.innerHTML = analysisMap[area.id];
       }
+    }
+    // 在编辑模式下，允许用户直接编辑描述文本且保持样式不变
+    if (MODE === 'edit') {
+      div.setAttribute('contenteditable', 'true');
+      div.style.cursor = 'text';
+      // 禁用拼写检查以避免干扰
+      div.setAttribute('spellcheck', 'false');
     }
   });
 }
@@ -1228,13 +1410,46 @@ function ensureManagers(){
   });
 }
 
-/* 预览层 */
-function openViewer(src){
+/* 预览层：新增区域索引和导航支持 */
+let currentViewerAreaId = null;
+let currentViewerIndex = 0;
+
+function openViewerAt(areaId, idx){
+  if(!areaId) return;
+  const list = imageArchives[areaId] || [];
+  if(!list.length) return;
+  // 正常化索引
+  if(idx < 0) idx = list.length - 1;
+  if(idx >= list.length) idx = 0;
+  currentViewerAreaId = areaId;
+  currentViewerIndex = idx;
   const v = $('#viewer');
-  $('#viewer-img').src=src;
+  $('#viewer-img').src = list[currentViewerIndex].src;
+  // 导航按钮：只有当图片数量大于1时才显示
+  const showNav = list.length > 1;
+  const prevBtn = $('#viewer-prev');
+  const nextBtn = $('#viewer-next');
+  if(prevBtn) prevBtn.style.display = showNav ? 'flex' : 'none';
+  if(nextBtn) nextBtn.style.display = showNav ? 'flex' : 'none';
   v.classList.add('active');
 }
-function closeViewer(){ $('#viewer').classList.remove('active'); }
+// 旧函数兼容: 若仅提供 src 则简单预览当前图片
+function openViewer(src){
+  const v = $('#viewer');
+  $('#viewer-img').src = src;
+  // 隐藏导航按钮
+  const prevBtn = $('#viewer-prev');
+  const nextBtn = $('#viewer-next');
+  if(prevBtn) prevBtn.style.display = 'none';
+  if(nextBtn) nextBtn.style.display = 'none';
+  v.classList.add('active');
+}
+function closeViewer(){
+  const v = $('#viewer');
+  v.classList.remove('active');
+  currentViewerAreaId = null;
+  currentViewerIndex = 0;
+}
 
 /* Scrollspy / 导航 */
 function bindNav(){
@@ -1301,6 +1516,24 @@ function applyMode() {
 
 /* 快捷键 */
 function bindKeys(){ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeViewer(); }); }
+
+// 预览层导航按钮事件绑定
+document.addEventListener('DOMContentLoaded', ()=>{
+  const prevBtn = document.getElementById('viewer-prev');
+  const nextBtn = document.getElementById('viewer-next');
+  if(prevBtn){
+    prevBtn.addEventListener('click', e=>{
+      e.stopPropagation();
+      if(currentViewerAreaId) openViewerAt(currentViewerAreaId, currentViewerIndex - 1);
+    });
+  }
+  if(nextBtn){
+    nextBtn.addEventListener('click', e=>{
+      e.stopPropagation();
+      if(currentViewerAreaId) openViewerAt(currentViewerAreaId, currentViewerIndex + 1);
+    });
+  }
+});
 
 /* 同步与分享 */
 async function doSync(){
@@ -1446,6 +1679,8 @@ function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
   bindKeys();
   // fill look analysis content after all areas have been bound
   fillLookAnalyses();
+  // 在编辑模式下启用全局文本编辑功能
+  enableGlobalEditing();
   $('#btn-save-local')?.addEventListener('click',()=>{ saveLocal(); });
   $('#btn-config')?.addEventListener('click',askToken); 
   $('#btn-sync')?.addEventListener('click',async ()=>{
