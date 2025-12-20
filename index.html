@@ -87,6 +87,10 @@ h1{
   background:linear-gradient(180deg,#151515,#121212);
   border:1px solid #222;border-radius:14px;padding:18px;
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s; /* 增加过渡 */
+  /* 允许网格项在内容过宽时收缩，防止因子元素撑破布局 */
+  min-width:0;
+  /* 隐藏横向溢出的内容，保证 look 项宽度不被内部元素撑宽 */
+  overflow-x:hidden;
 }
 .look-item:hover{
   transform: translateY(-5px); /* 悬浮升起 */
@@ -117,7 +121,15 @@ h1{
 .tab-content{display:none}
 .tab-content.active{display:block}
 /* Manager styles */
-.manager{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.manager{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+  /* 占位符宽度固定为父元素宽度，避免内容撑宽 */
+  width:100%;
+  min-width:0;
+}
 .mbtn{padding:6px 8px;border:1px solid #2c2c2c;background:#151515;color:#ddd;border-radius:8px;font-size:.85rem;cursor:pointer;transition:.2s;font-family:inherit}
 .mbtn:hover{background:#202020;border-color:#444}
 .thumbbar{
@@ -128,9 +140,15 @@ h1{
   padding:10px;
   border:1px dashed #333;
   border-radius:10px;
-  margin-top:12px;
+  /* margin-top removed: spacing now applied to wrapper */
   /* 增加缩略图栏的高度以容纳更高的缩略图（96px）并保留内边距 */
   height:112px;
+  /* 允许缩略图栏在父 flex 布局中扩展并收缩，防止因内容过多撑宽。
+     使用 0 基准值让 flex item 从零开始计算剩余空间，从而能够正确收缩 */
+  flex: 1 1 0;
+  min-width: 0;
+  /* 固定缩略图栏的宽度为父容器宽度，超出部分通过内部滚动条显示 */
+  width: 100%;
 }
 .thumb{
   position:relative;
@@ -180,6 +198,39 @@ h1{
   line-height:1;
   width:auto;
 }
+
+/* 缩略图栏容器及滚动按钮 */
+.thumb-wrapper{
+  position:relative;
+  width:100%;
+  margin-top:12px;
+  /* 使缩略图容器在父 flex 布局中占据整行并允许收缩，防止内容溢出撑宽 */
+  flex: 1 1 100%;
+  min-width: 0;
+  /* 隐藏容器外部溢出的水平内容，由子元素 thumbbar 控制滚动 */
+  overflow-x: hidden;
+}
+.thumb-wrapper .thumb-scroll{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(255,51,102,.85);
+  border:none;
+  color:#000;
+  font:900 1rem ui-monospace;
+  padding:8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  z-index:15;
+  display:none;
+  transition:.2s;
+}
+.thumb-wrapper .thumb-scroll:hover{
+  background:rgba(255,51,102,1);
+  transform:translateY(-50%) scale(1.05);
+}
+.thumb-wrapper .thumb-scroll.prev{left:4px;}
+.thumb-wrapper .thumb-scroll.next{right:4px;}
 .act .icon:hover{background:#000;transform:scale(1.1)}
 
 /* 新增上传占位缩略图样式 */
@@ -371,7 +422,11 @@ h1{
       <button class="mbtn" data-act="del">删除</button>
       <span class="badge" id="count-moodboard-area">数量: 0</span>
       <input type="file" accept="image/*" multiple hidden/>
-      <div class="thumbbar" draggable="false"></div>
+      <div class="thumb-wrapper">
+        <button class="thumb-scroll prev" title="向前滚动">⟵</button>
+        <div class="thumbbar" draggable="false"></div>
+        <button class="thumb-scroll next" title="向后滚动">⟶</button>
+      </div>
     </div>
   </section>
 
@@ -1155,6 +1210,30 @@ function updateThumbbar(areaId){
     console.error(err);
   }
   highlightThumb(areaId, currentIndex[areaId]||0);
+  // 设置缩略图栏的左右滚动按钮
+  const wrapper = mgr.querySelector('.thumb-wrapper');
+  if(wrapper){
+    const prevBtn = wrapper.querySelector('.thumb-scroll.prev');
+    const nextBtn = wrapper.querySelector('.thumb-scroll.next');
+    const barEl = wrapper.querySelector('.thumbbar');
+    if(prevBtn && nextBtn && barEl){
+      // 点击向左滚动：滚动一个视口宽度减去一定偏移量
+      prevBtn.onclick = (e) => {
+        e.stopPropagation();
+        barEl.scrollBy({left: -(barEl.clientWidth - 60), behavior: 'smooth'});
+      };
+      // 点击向右滚动：滚动一个视口宽度减去一定偏移量
+      nextBtn.onclick = (e) => {
+        e.stopPropagation();
+        barEl.scrollBy({left: barEl.clientWidth - 60, behavior: 'smooth'});
+      };
+      // 根据内容宽度是否超出容器决定是否显示滚动按钮。
+      // 只要内部内容宽度大于可视宽度则视为溢出，显示滚动按钮
+      const hasOverflow = barEl.scrollWidth > barEl.clientWidth;
+      prevBtn.style.display = hasOverflow ? 'flex' : 'none';
+      nextBtn.style.display = hasOverflow ? 'flex' : 'none';
+    }
+  }
 }
 
 /* 启用全局文本编辑：在编辑模式下为主要内容中的标题、段落等元素增加 contenteditable 属性，以保持原有样式并允许直接编辑 */
@@ -1404,7 +1483,11 @@ function ensureManagers(){
       <button class="mbtn" data-act="del">删除</button>
       <span class="badge" id="count-${id}">数量: 0</span>
       <input type="file" accept="image/*" multiple hidden/>
-      <div class="thumbbar" draggable="false"></div>
+      <div class="thumb-wrapper">
+        <button class="thumb-scroll prev" title="向前滚动">⟵</button>
+        <div class="thumbbar" draggable="false"></div>
+        <button class="thumb-scroll next" title="向后滚动">⟶</button>
+      </div>
     `;
     area.insertAdjacentElement('afterend', mgr);
   });
@@ -1506,11 +1589,36 @@ function applyMode() {
     $('#toolbar').hidden = false;
     $('#mode-badge').textContent = 'edit';
     $('#btn-share').style.display = 'inline-block'; // 显示分享链接按钮
+    // 在编辑模式下缩略图栏左对齐
+    $$('.manager .thumbbar').forEach(bar => {
+      bar.style.justifyContent = 'flex-start';
+    });
   } else {
     // 在查看模式下隐藏工具栏和分享链接按钮
     $('#toolbar').hidden = true;
     $('#btn-share').style.display = 'none'; // 隐藏分享链接按钮
-    $$('.manager').forEach(m => m.style.display = 'none'); // 隐藏管理控件
+    // 在查看模式下展示缩略图栏，但隐藏管理按钮和徽章
+    $$('.manager').forEach(mgr => {
+      // 确保容器可见
+      mgr.style.display = 'flex';
+      // 隐藏上传/设封面/移动/删除按钮、数量徽章以及文件输入控件
+      mgr.querySelectorAll('.mbtn, .badge, input[type="file"]').forEach(el => {
+        el.style.display = 'none';
+      });
+      // 确保缩略图栏显示为 flex
+      const bar = mgr.querySelector('.thumbbar');
+      if (bar) bar.style.display = 'flex';
+    });
+    // 在查看模式下将缩略图栏内容居中排布
+    $$('.manager .thumbbar').forEach(bar => {
+      bar.style.justifyContent = 'center';
+    });
+    // 如果分享弹窗已显示，强制关闭
+    const sm = document.getElementById('shareModal');
+    if(sm){
+      sm.classList.remove('show');
+      sm.setAttribute('aria-hidden','true');
+    }
   }
 }
 
@@ -1674,6 +1782,8 @@ function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
   await bootLoad();
   // 确保每个 look 都有管理控件，再绑定事件
   ensureManagers();
+  // 调整模式应用：由于 ensureManagers 会动态插入 manager，需要重新应用模式一次
+  applyMode();
   bindAllAreas();
   bindNav();
   bindKeys();
