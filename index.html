@@ -1268,13 +1268,17 @@ function bindTabs(){
 }
 
 /* 模式控制 */
-function applyMode(){
-  if(MODE==='edit'){
-    $('#toolbar').hidden=false;
-    $('#mode-badge').textContent='edit';
-  }else{
-    $('#toolbar').hidden=true;
-    $$('.manager').forEach(m=>m.style.display='none');
+function applyMode() {
+  if (MODE === 'edit') {
+    // 在编辑模式下显示工具栏和分享链接按钮
+    $('#toolbar').hidden = false;
+    $('#mode-badge').textContent = 'edit';
+    $('#btn-share').style.display = 'inline-block'; // 显示分享链接按钮
+  } else {
+    // 在查看模式下隐藏工具栏和分享链接按钮
+    $('#toolbar').hidden = true;
+    $('#btn-share').style.display = 'none'; // 隐藏分享链接按钮
+    $$('.manager').forEach(m => m.style.display = 'none'); // 隐藏管理控件
   }
 }
 
@@ -1323,39 +1327,51 @@ async function copyTextSafe(text){
   return ok;
 }
 
-function openShareModal(url){
+function openShareModal(url) {
+  if (MODE === 'view') {
+    return; // 如果是查看模式，不弹出分享链接弹窗
+  }
+  
   const modal = $('#shareModal');
   const input = $('#shareModalInput');
   const openA = $('#shareModalOpen');
+  
   input.value = url;
   openA.href = url;
-  modal.classList.add('show');
-  modal.setAttribute('aria-hidden','false');
-  // 自动选中，方便手动复制
-  setTimeout(()=>{ input.focus(); input.select(); }, 0);
+  
+  modal.classList.add('show');  // 弹出分享链接弹窗
+  modal.setAttribute('aria-hidden', 'false');
+  
+  setTimeout(() => { 
+    input.focus(); 
+    input.select(); // 自动选中链接，方便复制
+  }, 0);
 }
 
-async function doShare(){
-  try{
+async function doShare() {
+  try {
     toast('生成分享链接中...');
+    
     let gistId = localStorage.getItem(GIST_ID_KEY);
-    if(!gistId){
+    if (!gistId) {
       toast('未检测到云端版本，正在尝试先同步...');
       gistId = await doSync();
     }
-    if(!gistId){
+    
+    if (!gistId) {
       toast('无法生成分享链接：云端同步未完成。', 3200);
       return;
     }
+
     const url = genShareUrl(gistId);
 
-    // 弹窗永远给到用户“可见反馈”
-    openShareModal(url);
-
-    // 尝试自动复制（成功/失败都给提示）
-    const ok = await copyTextSafe(url);
-    toast(ok ? '分享链接已复制' : '已生成链接（请在弹窗中手动复制）', 2600);
-  }catch(err){
+    // 只有在编辑模式下，才会执行下面的代码
+    if (MODE === 'edit') {
+      openShareModal(url);  // 打开分享链接弹窗
+      const ok = await copyTextSafe(url);
+      toast(ok ? '分享链接已复制' : '已生成链接（请在弹窗中手动复制）', 2600);
+    }
+  } catch (err) {
     console.error(err);
     toast('生成分享链接失败：' + (err?.message || '未知错误'), 3500);
   }
