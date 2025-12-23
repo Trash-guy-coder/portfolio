@@ -272,22 +272,39 @@ h1{
 }
 .cover-badge{position:absolute;right:4px;bottom:4px;background:var(--acc);color:#000;border-radius:6px;padding:2px 6px;font:800 .7rem ui-monospace;pointer-events:none}
 /* 预览层 */
-.viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out}
+.viewer{
+  /* 覆盖整个视口，避免受 body 边距或侧栏影响 */
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  cursor:zoom-out;
+}
 .viewer.active{display:flex}
 .viewer-box{
-  /* 固定预览框尺寸：相对于视口，同时设置最大限制，避免图片宽度不同导致预览框大小变化 */
-  /* 调整预览框尺寸：在移动端让预览框更靠近全屏，减小周围留白
-     使用较高的视口占比，同时保留最大宽高限制。
-     这能让大图预览在手机上几乎占满可视区域，且始终居中。 */
+  /* 预览框采用固定宽高相对视口，并居中显示。为了保证在不同长宽比的图片下始终居中，
+     宽度设置为视口宽度的 90%，高度设置为视口高度的 90%。这样无论图片是横图还是竖图，
+     预览框都会在屏幕中心显示，不会因为图片尺寸不同而偏向一侧。同时通过 flex 布局
+     将图片居中显示在预览框内部。 */
+  display:flex;
+  align-items:center;
+  justify-content:center;
   width:90vw;
+  max-width:90vw;
   height:90vh;
-  max-width:900px;
-  max-height:900px;
+  max-height:90vh;
   background:#0f0f0f;
   border:1px solid #333;
   border-radius:14px;
   box-shadow:0 20px 80px rgba(0,0,0,.5);
-  padding:10px;
+  padding:0;
 }
 .viewer img{
   /* 为预览图设置最大宽高，不强制拉伸，以适配不同长宽比的图片。在移动端避免超出视口导致页面缩放 */
@@ -405,7 +422,7 @@ h1{
     <h3>目标客群：活力探索者 (Active Explorer)</h3>
     <div class="content-block">
         <h4>Gen Z 核心画像与购买驱动力</h4>
-        <p>目标客群（15-29岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
+        <p>目标客群（18-25岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
         <p>购买驱动是<strong>“颜值主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
     </div>
   </section>
