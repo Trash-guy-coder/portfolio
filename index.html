@@ -7,8 +7,9 @@
       指定 maximum-scale=1.0 和 user-scalable=no 可以阻止浏览器在加载宽图或表单元素时
       自动缩放页面，从而保持页面在手机上的初始比例。
     -->
-    <!-- 视口设置：保持原始比例，允许用户缩放 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- 视口设置：保持原始比例，并禁止浏览器自动缩放页面 -->
+    <!-- 设置 maximum-scale=1.0 和 user-scalable=no 防止在移动端预览大图时页面被强制放大或缩小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>SM-PROJECT | URBAN VOYAGE | DESIGN PORTFOLIO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+SC:wght@100..900&display=swap" rel="stylesheet">
@@ -285,8 +286,11 @@ h1{
   padding:10px;
 }
 .viewer img{
-  width:100%;
-  height:100%;
+  /* 为预览图设置最大宽高，不强制拉伸，以适配不同长宽比的图片。在移动端避免超出视口导致页面缩放 */
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
   object-fit:contain;
   border-radius:8px;
 }
@@ -373,14 +377,14 @@ h1{
 <!-- 主内容 -->
 <div class="main">
   <header class="container">
-    <h1>[SM PROJECT] URBAN VOYAGE | 都市漫游</h1>
+    <h1>[SM PROJECT] EMOTION FIRST | 情绪至上</h1>
     <span class="archive-tag">FILE: P-2026-FW | DESIGNER: [集] | STATUS: FINAL (SM OFFER VERSION)</span>
   </header>
 
   <!-- 01 核心策略与概念 -->
   <section id="strategy" class="section container">
     <h2>01. CORE STRATEGY & CONCEPT</h2>
-    <h3>主题：URBAN VOYAGE（都市漫游）</h3>
+    <h3>主题： EMOTION FIRST（情绪至上）</h3>
     <div class="content-block">
       <h4>核心叙事与商业目标</h4>
       <p>核心：为 <strong>Z 世代提供高品质、趣味性、多场景的日常穿着解决方案</strong>。实现品牌的<strong>实穿性、时尚感和高性价比</strong>的完美平衡。</p>
@@ -398,7 +402,7 @@ h1{
     <div class="content-block">
         <h4>Gen Z 核心画像与购买驱动力</h4>
         <p>目标客群（18-25岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
-        <p>购买驱动是<strong>“颜值主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
+        <p>购买驱动是<strong>“情绪主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
     </div>
   </section>
 
