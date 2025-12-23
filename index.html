@@ -138,11 +138,12 @@ h1{
   gap:8px;
   overflow-x:auto;
   overflow-y:hidden;
+  /* 缩略图栏现在采用垂直拉伸的布局，子元素高度填满栏高 */
+  align-items:stretch;
   padding:10px;
   border:1px dashed #333;
   border-radius:10px;
-  /* margin-top removed: spacing now applied to wrapper */
-  /* 增加缩略图栏的高度以容纳更高的缩略图（96px）并保留内边距 */
+  /* 将缩略图栏高度设为固定值，以便计算内部缩略图高度；可根据需要调整 */
   height:112px;
   /* 允许缩略图栏在父 flex 布局中扩展并收缩，防止因内容过多撑宽。
      使用 0 基准值让 flex item 从零开始计算剩余空间，从而能够正确收缩 */
@@ -154,8 +155,8 @@ h1{
 .thumb{
   position:relative;
   width:72px;
-  /* 增加缩略图高度，确保竖排按钮有足够点击区域 */
-  height:96px;
+  /* 让缩略图高度随缩略图栏自适应：填满容器高度 */
+  height:100%;
   flex:0 0 auto;
   border-radius:8px;
   border:2px solid #2a2a2a;
@@ -237,8 +238,8 @@ h1{
 /* 新增上传占位缩略图样式 */
 .thumb.placeholder{
   width:72px;
-  /* 缩略图占位符与缩略图一致的高度 */
-  height:96px;
+  /* 缩略图占位符高度随缩略图栏自适应，填满容器高度 */
+  height:100%;
   flex:0 0 auto;
   border-radius:8px;
   border:2px dashed #3a3a3a;
@@ -275,10 +276,13 @@ h1{
 .viewer.active{display:flex}
 .viewer-box{
   /* 固定预览框尺寸：相对于视口，同时设置最大限制，避免图片宽度不同导致预览框大小变化 */
+  /* 调整预览框尺寸：在移动端让预览框更靠近全屏，减小周围留白
+     使用较高的视口占比，同时保留最大宽高限制。
+     这能让大图预览在手机上几乎占满可视区域，且始终居中。 */
   width:90vw;
-  height:80vh;
+  height:90vh;
   max-width:900px;
-  max-height:700px;
+  max-height:900px;
   background:#0f0f0f;
   border:1px solid #333;
   border-radius:14px;
@@ -377,14 +381,14 @@ h1{
 <!-- 主内容 -->
 <div class="main">
   <header class="container">
-    <h1>[SM PROJECT] EMOTION FIRST | 情绪至上</h1>
+    <h1>[SM PROJECT] HEART OVER MIND | 情绪至上</h1>
     <span class="archive-tag">FILE: P-2026-FW | DESIGNER: [集] | STATUS: FINAL (SM OFFER VERSION)</span>
   </header>
 
   <!-- 01 核心策略与概念 -->
   <section id="strategy" class="section container">
     <h2>01. CORE STRATEGY & CONCEPT</h2>
-    <h3>主题： EMOTION FIRST（情绪至上）</h3>
+    <h3>主题：HEART OVER MIND（情绪至上）</h3>
     <div class="content-block">
       <h4>核心叙事与商业目标</h4>
       <p>核心：为 <strong>Z 世代提供高品质、趣味性、多场景的日常穿着解决方案</strong>。实现品牌的<strong>实穿性、时尚感和高性价比</strong>的完美平衡。</p>
@@ -401,8 +405,8 @@ h1{
     <h3>目标客群：活力探索者 (Active Explorer)</h3>
     <div class="content-block">
         <h4>Gen Z 核心画像与购买驱动力</h4>
-        <p>目标客群（18-25岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
-        <p>购买驱动是<strong>“情绪主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
+        <p>目标客群（15-29岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
+        <p>购买驱动是<strong>“颜值主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
     </div>
   </section>
 
