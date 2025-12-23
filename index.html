@@ -253,6 +253,45 @@ h1{
   transition:.2s;
   user-select:none;
 }
+
+/* ===== 分享链接弹窗样式 ===== */
+/* 默认隐藏弹窗，通过 .show 类控制显示。使用 fixed 定位和模糊背景实现遮罩效果。 */
+.modal{
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(4px);
+  align-items:center;
+  justify-content:center;
+  z-index:80;
+}
+.modal.show{
+  display:flex;
+}
+/* 弹窗卡片本身，使用主题面板样式 */
+.modal-card{
+  background:#111;
+  border:1px solid #333;
+  border-radius:12px;
+  padding:20px;
+  max-width:90vw;
+  width:420px;
+  color:#ddd;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.modal-title{font:700 1.1rem ui-monospace;color:var(--acc);}
+.modal-x{background:none;border:none;color:var(--acc);font-size:1.4rem;cursor:pointer;transition:.2s;}
+.modal-x:hover{color:#fff;}
+.modal-body{}
+.modal-input{width:100%;padding:8px 12px;margin-bottom:14px;color:#ddd;background:#1a1a1a;border:1px solid #333;border-radius:6px;font-family:inherit;}
+.modal-actions{display:flex;gap:8px;margin-bottom:10px;}
+.modal-btn{padding:6px 14px;border:1px solid #444;border-radius:8px;background:#202020;color:#ddd;cursor:pointer;font-size:.9rem;transition:.2s;}
+.modal-btn:hover{background:#2a2a2a;border-color:#555;}
+.modal-btn.ghost{background:#141414;color:#bbb;border-color:#333;}
+.modal-tip{font-size:.75rem;color:#777;}
 .thumb.placeholder:hover{
   border-color:#555;
   color:var(--acc);
@@ -398,7 +437,7 @@ h1{
 <!-- 主内容 -->
 <div class="main">
   <header class="container">
-    <h1>[SM PROJECT] HEART OVER MIND | 情绪至上</h1>
+    <h1>[SM PROJECT]  HEART OVER MIND | 情绪至上</h1>
     <span class="archive-tag">FILE: P-2026-FW | DESIGNER: [集] | STATUS: FINAL (SM OFFER VERSION)</span>
   </header>
 
