@@ -7,6 +7,8 @@
       指定 maximum-scale=1.0 和 user-scalable=no 可以阻止浏览器在加载宽图或表单元素时
       自动缩放页面，从而保持页面在手机上的初始比例。
     -->
+    <!-- 视口设置：保持原始比例，并禁止浏览器自动缩放页面 -->
+    <!-- 设置 maximum-scale=1.0 和 user-scalable=no 防止在移动端预览大图时页面被强制放大或缩小 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>SM-PROJECT | URBAN VOYAGE | DESIGN PORTFOLIO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,6 +88,10 @@ h1{
   background:linear-gradient(180deg,#151515,#121212);
   border:1px solid #222;border-radius:14px;padding:18px;
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s; /* 增加过渡 */
+  /* 允许网格项在内容过宽时收缩，防止因子元素撑破布局 */
+  min-width:0;
+  /* 隐藏横向溢出的内容，保证 look 项宽度不被内部元素撑宽 */
+  overflow-x:hidden;
 }
 .look-item:hover{
   transform: translateY(-5px); /* 悬浮升起 */
@@ -102,19 +108,7 @@ h1{
 .placeholder{text-align:center;color:#666;padding:100px 10px;font:600 1rem ui-monospace;pointer-events:none}
 .carousel{display:flex;height:100%;transition:transform .4s ease;will-change:transform}
 .frame{flex:0 0 100%;display:flex;align-items:center;justify-content:center;min-height:320px}
-.frame img{
-  /*
-    自适应宽度和高度：让图片在各类设备上保持容器宽度，并根据原始比例调整高度。
-    通过设置 height:auto 和 max-height:100%，可以防止横向图片在移动端撑宽导致页面自动放大。
-  */
-  width:100%;
-  height:auto;
-  max-width:100%;
-  max-height:100%;
-  object-fit:contain;
-  user-select:none;
-  -webkit-user-drag:none;
-}
+.frame img{max-width:100%;max-height:100%;height:320px;object-fit:contain;user-select:none;-webkit-user-drag:none}
 .counter{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.7);border:1px solid #333;padding:4px 8px;border-radius:999px;font:700 .8rem ui-monospace;pointer-events:none}
 .navbtn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,51,102,.85);border:none;color:#000;font:900 1rem ui-monospace;padding:10px 12px;border-radius:10px;cursor:pointer;z-index:5;transition:.2s}
 .navbtn:hover{background:rgba(255,51,102,1);transform:translateY(-50%) scale(1.05)}
@@ -128,11 +122,52 @@ h1{
 .tab-content{display:none}
 .tab-content.active{display:block}
 /* Manager styles */
-.manager{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.manager{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+  /* 占位符宽度固定为父元素宽度，避免内容撑宽 */
+  width:100%;
+  min-width:0;
+}
 .mbtn{padding:6px 8px;border:1px solid #2c2c2c;background:#151515;color:#ddd;border-radius:8px;font-size:.85rem;cursor:pointer;transition:.2s;font-family:inherit}
 .mbtn:hover{background:#202020;border-color:#444}
-.thumbbar{display:flex;gap:8px;overflow:auto;padding:10px;border:1px dashed #333;border-radius:10px;margin-top:12px;min-height:92px}
-.thumb{position:relative;min-width:72px;min-height:72px;border-radius:8px;border:2px solid #2a2a2a;background:#0e0e0e;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;user-select:none}
+.thumbbar{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  /* 缩略图栏现在采用垂直拉伸的布局，子元素高度填满栏高 */
+  align-items:stretch;
+  padding:10px;
+  border:1px dashed #333;
+  border-radius:10px;
+  /* 将缩略图栏高度设为固定值，以便计算内部缩略图高度；可根据需要调整 */
+  height:112px;
+  /* 允许缩略图栏在父 flex 布局中扩展并收缩，防止因内容过多撑宽。
+     使用 0 基准值让 flex item 从零开始计算剩余空间，从而能够正确收缩 */
+  flex: 1 1 0;
+  min-width: 0;
+  /* 固定缩略图栏的宽度为父容器宽度，超出部分通过内部滚动条显示 */
+  width: 100%;
+}
+.thumb{
+  position:relative;
+  width:72px;
+  /* 让缩略图高度随缩略图栏自适应：填满容器高度 */
+  height:100%;
+  flex:0 0 auto;
+  border-radius:8px;
+  border:2px solid #2a2a2a;
+  background:#0e0e0e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+  user-select:none;
+}
 .thumb:hover{border-color:#444;transform:scale(1.05)}
 .thumb.dragging{opacity:.5;cursor:grabbing}
 .thumb.drag-over{border-color:var(--acc);background:#1a1a1a}
@@ -165,12 +200,47 @@ h1{
   line-height:1;
   width:auto;
 }
+
+/* 缩略图栏容器及滚动按钮 */
+.thumb-wrapper{
+  position:relative;
+  width:100%;
+  margin-top:12px;
+  /* 使缩略图容器在父 flex 布局中占据整行并允许收缩，防止内容溢出撑宽 */
+  flex: 1 1 100%;
+  min-width: 0;
+  /* 隐藏容器外部溢出的水平内容，由子元素 thumbbar 控制滚动 */
+  overflow-x: hidden;
+}
+.thumb-wrapper .thumb-scroll{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(255,51,102,.85);
+  border:none;
+  color:#000;
+  font:900 1rem ui-monospace;
+  padding:8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  z-index:15;
+  display:none;
+  transition:.2s;
+}
+.thumb-wrapper .thumb-scroll:hover{
+  background:rgba(255,51,102,1);
+  transform:translateY(-50%) scale(1.05);
+}
+.thumb-wrapper .thumb-scroll.prev{left:4px;}
+.thumb-wrapper .thumb-scroll.next{right:4px;}
 .act .icon:hover{background:#000;transform:scale(1.1)}
 
 /* 新增上传占位缩略图样式 */
 .thumb.placeholder{
-  min-width:72px;
-  min-height:72px;
+  width:72px;
+  /* 缩略图占位符高度随缩略图栏自适应，填满容器高度 */
+  height:100%;
+  flex:0 0 auto;
   border-radius:8px;
   border:2px dashed #3a3a3a;
   background:#161616;
@@ -194,12 +264,40 @@ h1{
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+
+/* 对所有 contenteditable 元素应用文本换行和预格式化属性，确保编辑后的文字能自适应容器宽度 */
+[contenteditable="true"] {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
 .cover-badge{position:absolute;right:4px;bottom:4px;background:var(--acc);color:#000;border-radius:6px;padding:2px 6px;font:800 .7rem ui-monospace;pointer-events:none}
 /* 预览层 */
 .viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out}
 .viewer.active{display:flex}
-.viewer-box{max-width:92vw;max-height:88vh;background:#0f0f0f;border:1px solid #333;border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.5);padding:10px}
-.viewer img{max-width:90vw;max-height:84vh;object-fit:contain;border-radius:8px}
+.viewer-box{
+  /* 固定预览框尺寸：相对于视口，同时设置最大限制，避免图片宽度不同导致预览框大小变化 */
+  /* 调整预览框尺寸：在移动端让预览框更靠近全屏，减小周围留白
+     使用较高的视口占比，同时保留最大宽高限制。
+     这能让大图预览在手机上几乎占满可视区域，且始终居中。 */
+  width:90vw;
+  height:90vh;
+  max-width:900px;
+  max-height:900px;
+  background:#0f0f0f;
+  border:1px solid #333;
+  border-radius:14px;
+  box-shadow:0 20px 80px rgba(0,0,0,.5);
+  padding:10px;
+}
+.viewer img{
+  /* 为预览图设置最大宽高，不强制拉伸，以适配不同长宽比的图片。在移动端避免超出视口导致页面缩放 */
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:8px;
+}
 /* 预览层导航按钮：左右半透明按钮 */
 .viewer-nav{
   position:absolute;
@@ -242,14 +340,8 @@ h1{
   .nav-link.active{border-bottom-color:var(--acc)}
   header{padding:40px 30px 20px}
   h1{font-size:2rem}
-  /*
-    在移动端移除固定高度，改为自适应高度，避免横向图片撑宽时触发自动缩放。
-  */
-  .frame img{
-    width:100%;
-    height:auto;
-    max-height:100%;
-  }
+  /* 移动端缩略图区高度适配，保持固定高度 */
+  .frame img{height:240px}
 }
 ::-webkit-scrollbar{height:8px;width:8px}
 ::-webkit-scrollbar-track{background:#0d0d0d}
@@ -289,14 +381,14 @@ h1{
 <!-- 主内容 -->
 <div class="main">
   <header class="container">
-    <h1>[SM PROJECT] URBAN VOYAGE | 都市漫游</h1>
+    <h1>[SM PROJECT] HEART OVER MIND | 情绪至上</h1>
     <span class="archive-tag">FILE: P-2026-FW | DESIGNER: [集] | STATUS: FINAL (SM OFFER VERSION)</span>
   </header>
 
   <!-- 01 核心策略与概念 -->
   <section id="strategy" class="section container">
     <h2>01. CORE STRATEGY & CONCEPT</h2>
-    <h3>主题：URBAN VOYAGE（都市漫游）</h3>
+    <h3>主题：HEART OVER MIND（情绪至上）</h3>
     <div class="content-block">
       <h4>核心叙事与商业目标</h4>
       <p>核心：为 <strong>Z 世代提供高品质、趣味性、多场景的日常穿着解决方案</strong>。实现品牌的<strong>实穿性、时尚感和高性价比</strong>的完美平衡。</p>
@@ -313,7 +405,7 @@ h1{
     <h3>目标客群：活力探索者 (Active Explorer)</h3>
     <div class="content-block">
         <h4>Gen Z 核心画像与购买驱动力</h4>
-        <p>目标客群（18-25岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
+        <p>目标客群（15-29岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
         <p>购买驱动是<strong>“颜值主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
     </div>
   </section>
@@ -338,7 +430,11 @@ h1{
       <button class="mbtn" data-act="del">删除</button>
       <span class="badge" id="count-moodboard-area">数量: 0</span>
       <input type="file" accept="image/*" multiple hidden/>
-      <div class="thumbbar" draggable="false"></div>
+      <div class="thumb-wrapper">
+        <button class="thumb-scroll prev" title="向前滚动">⟵</button>
+        <div class="thumbbar" draggable="false"></div>
+        <button class="thumb-scroll next" title="向后滚动">⟶</button>
+      </div>
     </div>
   </section>
 
@@ -779,16 +875,8 @@ const PUBLIC_BASE_URL = '';
 
 /* ===== 全局状态 ===== */
 const QS = new URLSearchParams(location.search);
+const MODE = (QS.get('mode')==='view') ? 'view':'edit';
 const GIST_ID_PARAM = QS.get('gist') || null;
-
-// 安全：只有在当前浏览器已保存 GitHub Token（用于同步 Gist）时，才允许进入编辑态。
-// 这样即便他人拿到分享链接并删除 mode 参数，也无法编辑你的作品集。
-const TOKEN_KEY = 'GIST_TOKEN';
-const MODE = (()=>{
-  const token = (localStorage.getItem(TOKEN_KEY) || '').trim();
-  if (!token) return 'view';
-  return (QS.get('mode') === 'view') ? 'view' : 'edit';
-})();
 
 const LIMIT_PER_SLOT = 20;
 const MAX_FILE_MB = 15;
@@ -804,6 +892,7 @@ let dragSourceIndex = null;
 let portfolioId = localStorage.getItem('PORTFOLIO_ID') || genId();
 localStorage.setItem('PORTFOLIO_ID', portfolioId);
 const STORAGE_KEY = 'NEO_ARCHIVE_DATA_v3';
+const TOKEN_KEY = 'GIST_TOKEN';
 const GIST_ID_KEY = 'GIST_ID';
 let syncInFlight = false;
 
@@ -1129,6 +1218,50 @@ function updateThumbbar(areaId){
     console.error(err);
   }
   highlightThumb(areaId, currentIndex[areaId]||0);
+  // 设置缩略图栏的左右滚动按钮
+  const wrapper = mgr.querySelector('.thumb-wrapper');
+  if(wrapper){
+    const prevBtn = wrapper.querySelector('.thumb-scroll.prev');
+    const nextBtn = wrapper.querySelector('.thumb-scroll.next');
+    const barEl = wrapper.querySelector('.thumbbar');
+    if(prevBtn && nextBtn && barEl){
+      // 点击向左滚动：滚动一个视口宽度减去一定偏移量
+      prevBtn.onclick = (e) => {
+        e.stopPropagation();
+        barEl.scrollBy({left: -(barEl.clientWidth - 60), behavior: 'smooth'});
+      };
+      // 点击向右滚动：滚动一个视口宽度减去一定偏移量
+      nextBtn.onclick = (e) => {
+        e.stopPropagation();
+        barEl.scrollBy({left: barEl.clientWidth - 60, behavior: 'smooth'});
+      };
+      // 根据内容宽度是否超出容器决定是否显示滚动按钮。
+      // 只要内部内容宽度大于可视宽度则视为溢出，显示滚动按钮
+      const hasOverflow = barEl.scrollWidth > barEl.clientWidth;
+      prevBtn.style.display = hasOverflow ? 'flex' : 'none';
+      nextBtn.style.display = hasOverflow ? 'flex' : 'none';
+    }
+  }
+}
+
+/* 启用全局文本编辑：在编辑模式下为主要内容中的标题、段落等元素增加 contenteditable 属性，以保持原有样式并允许直接编辑 */
+function enableGlobalEditing(){
+  if(MODE !== 'edit') return;
+  // 定义需要启用编辑的选择器列表
+  const selectors = [
+    '.main h2', '.main h3', '.main h4', '.main h5',
+    '.main p', '.main span.archive-tag', '.main .content-block',
+    '.main .section h3', '.main .section p', '.look-analysis'
+  ];
+  selectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      // 避免设置在交互元素（如按钮）上
+      if(el.tagName === 'BUTTON' || el.tagName === 'A' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return;
+      el.setAttribute('contenteditable','true');
+      el.setAttribute('spellcheck','false');
+      el.style.cursor = 'text';
+    });
+  });
 }
 
 function highlightThumb(areaId, idx){
@@ -1358,7 +1491,11 @@ function ensureManagers(){
       <button class="mbtn" data-act="del">删除</button>
       <span class="badge" id="count-${id}">数量: 0</span>
       <input type="file" accept="image/*" multiple hidden/>
-      <div class="thumbbar" draggable="false"></div>
+      <div class="thumb-wrapper">
+        <button class="thumb-scroll prev" title="向前滚动">⟵</button>
+        <div class="thumbbar" draggable="false"></div>
+        <button class="thumb-scroll next" title="向后滚动">⟶</button>
+      </div>
     `;
     area.insertAdjacentElement('afterend', mgr);
   });
@@ -1460,11 +1597,36 @@ function applyMode() {
     $('#toolbar').hidden = false;
     $('#mode-badge').textContent = 'edit';
     $('#btn-share').style.display = 'inline-block'; // 显示分享链接按钮
+    // 在编辑模式下缩略图栏左对齐
+    $$('.manager .thumbbar').forEach(bar => {
+      bar.style.justifyContent = 'flex-start';
+    });
   } else {
     // 在查看模式下隐藏工具栏和分享链接按钮
     $('#toolbar').hidden = true;
     $('#btn-share').style.display = 'none'; // 隐藏分享链接按钮
-    $$('.manager').forEach(m => m.style.display = 'none'); // 隐藏管理控件
+    // 在查看模式下展示缩略图栏，但隐藏管理按钮和徽章
+    $$('.manager').forEach(mgr => {
+      // 确保容器可见
+      mgr.style.display = 'flex';
+      // 隐藏上传/设封面/移动/删除按钮、数量徽章以及文件输入控件
+      mgr.querySelectorAll('.mbtn, .badge, input[type="file"]').forEach(el => {
+        el.style.display = 'none';
+      });
+      // 确保缩略图栏显示为 flex
+      const bar = mgr.querySelector('.thumbbar');
+      if (bar) bar.style.display = 'flex';
+    });
+    // 在查看模式下将缩略图栏内容居中排布
+    $$('.manager .thumbbar').forEach(bar => {
+      bar.style.justifyContent = 'center';
+    });
+    // 如果分享弹窗已显示，强制关闭
+    const sm = document.getElementById('shareModal');
+    if(sm){
+      sm.classList.remove('show');
+      sm.setAttribute('aria-hidden','true');
+    }
   }
 }
 
@@ -1628,11 +1790,15 @@ function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
   await bootLoad();
   // 确保每个 look 都有管理控件，再绑定事件
   ensureManagers();
+  // 调整模式应用：由于 ensureManagers 会动态插入 manager，需要重新应用模式一次
+  applyMode();
   bindAllAreas();
   bindNav();
   bindKeys();
   // fill look analysis content after all areas have been bound
   fillLookAnalyses();
+  // 在编辑模式下启用全局文本编辑功能
+  enableGlobalEditing();
   $('#btn-save-local')?.addEventListener('click',()=>{ saveLocal(); });
   $('#btn-config')?.addEventListener('click',askToken); 
   $('#btn-sync')?.addEventListener('click',async ()=>{
