@@ -253,6 +253,45 @@ h1{
   transition:.2s;
   user-select:none;
 }
+
+/* ===== 分享链接弹窗样式 ===== */
+/* 默认隐藏弹窗，通过 .show 类控制显示。使用 fixed 定位和模糊背景实现遮罩效果。 */
+.modal{
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(4px);
+  align-items:center;
+  justify-content:center;
+  z-index:80;
+}
+.modal.show{
+  display:flex;
+}
+/* 弹窗卡片本身，使用主题面板样式 */
+.modal-card{
+  background:#111;
+  border:1px solid #333;
+  border-radius:12px;
+  padding:20px;
+  max-width:90vw;
+  width:420px;
+  color:#ddd;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.modal-title{font:700 1.1rem ui-monospace;color:var(--acc);}
+.modal-x{background:none;border:none;color:var(--acc);font-size:1.4rem;cursor:pointer;transition:.2s;}
+.modal-x:hover{color:#fff;}
+.modal-body{}
+.modal-input{width:100%;padding:8px 12px;margin-bottom:14px;color:#ddd;background:#1a1a1a;border:1px solid #333;border-radius:6px;font-family:inherit;}
+.modal-actions{display:flex;gap:8px;margin-bottom:10px;}
+.modal-btn{padding:6px 14px;border:1px solid #444;border-radius:8px;background:#202020;color:#ddd;cursor:pointer;font-size:.9rem;transition:.2s;}
+.modal-btn:hover{background:#2a2a2a;border-color:#555;}
+.modal-btn.ghost{background:#141414;color:#bbb;border-color:#333;}
+.modal-tip{font-size:.75rem;color:#777;}
 .thumb.placeholder:hover{
   border-color:#555;
   color:var(--acc);
@@ -272,22 +311,38 @@ h1{
 }
 .cover-badge{position:absolute;right:4px;bottom:4px;background:var(--acc);color:#000;border-radius:6px;padding:2px 6px;font:800 .7rem ui-monospace;pointer-events:none}
 /* 预览层 */
-.viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out}
+.viewer{
+  /* 覆盖整个视口，避免受 body 边距或侧栏影响 */
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  cursor:zoom-out;
+}
 .viewer.active{display:flex}
 .viewer-box{
-  /* 固定预览框尺寸：相对于视口，同时设置最大限制，避免图片宽度不同导致预览框大小变化 */
-  /* 调整预览框尺寸：在移动端让预览框更靠近全屏，减小周围留白
-     使用较高的视口占比，同时保留最大宽高限制。
-     这能让大图预览在手机上几乎占满可视区域，且始终居中。 */
-  width:90vw;
-  height:90vh;
-  max-width:900px;
-  max-height:900px;
-  background:#0f0f0f;
-  border:1px solid #333;
-  border-radius:14px;
-  box-shadow:0 20px 80px rgba(0,0,0,.5);
-  padding:10px;
+  /* 预览框采用自适应宽高，并居中显示。避免固定宽度导致图片在某些长宽比下偏向一侧。
+     使用 flex 布局将图片居中，同时通过 max-width/max-height 限制在视口的 90%，
+     让预览框尺寸跟随图片大小自适应，在不同尺寸图片下都能保持居中。 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #0f0f0f;
+  border: 1px solid #333;
+  border-radius: 14px;
+  box-shadow: 0 20px 80px rgba(0,0,0,.5);
+  padding: 0;
 }
 .viewer img{
   /* 为预览图设置最大宽高，不强制拉伸，以适配不同长宽比的图片。在移动端避免超出视口导致页面缩放 */
@@ -381,7 +436,7 @@ h1{
 <!-- 主内容 -->
 <div class="main">
   <header class="container">
-    <h1>[SM PROJECT] HEART OVER MIND | 情绪至上</h1>
+    <h1>[SM PROJECT]  HEART OVER MIND | 情绪至上</h1>
     <span class="archive-tag">FILE: P-2026-FW | DESIGNER: [集] | STATUS: FINAL (SM OFFER VERSION)</span>
   </header>
 
@@ -405,7 +460,7 @@ h1{
     <h3>目标客群：活力探索者 (Active Explorer)</h3>
     <div class="content-block">
         <h4>Gen Z 核心画像与购买驱动力</h4>
-        <p>目标客群（15-29岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
+        <p>目标客群（18-25岁，学生/职场新人）痛点是 <strong>“追求高性价比”、“渴望社交认同”和“穿搭场景多元”</strong>。</p>
         <p>购买驱动是<strong>“颜值主义、舒适主义和 KOL 种草”</strong>：他们需要的是既能满足教室、通勤、城市户外等<strong>多种场景需求</strong>，又能通过<strong>趣味性设计</strong>获得圈层认同的服装。</p>
     </div>
   </section>
