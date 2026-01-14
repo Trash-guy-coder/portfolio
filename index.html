@@ -1908,11 +1908,17 @@ async function bootLoad(){
       // 1) 先尝试本地（可能因图片过大超出 localStorage 而失败）
       const loaded = loadLocal();
       if(loaded){
-        if(MODE==='edit'){ toast('已加载本地数据（保存在本地浏览器）'); }
-        return;
+        // 如果本地数据存在但图片为空（常见于 localStorage 超限写入失败后只剩空壳），并且有云端 gistId，则继续尝试从云端恢复
+        const localHasAny = (()=>{ try{
+          return Object.values(imageArchives||{}).some(v=>Array.isArray(v) && v.length>0);
+        }catch(e){ return false; } })();
+        if(localHasAny){
+          if(MODE==='edit'){ toast('已加载本地数据（保存在本地浏览器）'); }
+          return;
+        }
       }
 
-      // 2) 若本地没有数据，但曾经做过云端同步（本地缓存了 gistId），则自动从云端恢复
+      // 2) 若本地没有数据（或本地图片为空），但曾经做过云端同步（本地缓存了 gistId），则自动从云端恢复
       const cachedGistId = (localStorage.getItem(GIST_ID_KEY) || '').trim();
       if(cachedGistId){
         loader(true); setStatus?.('从云端恢复…');
