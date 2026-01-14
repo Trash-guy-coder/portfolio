@@ -233,6 +233,15 @@ h1{
 }
 .thumb-wrapper .thumb-scroll.prev{left:4px;}
 .thumb-wrapper .thumb-scroll.next{right:4px;}
+/* View 端占位符下方缩略预览条 */
+.view-thumb-wrapper{
+  display:flex;
+  gap:8px;
+  align-items:stretch;
+  margin-top:10px;
+}
+.view-thumb-wrapper .thumbbar{height:96px}
+
 .act .icon:hover{background:#000;transform:scale(1.1)}
 
 /* 新增上传占位缩略图样式 */
@@ -1297,6 +1306,9 @@ function updateThumbbar(areaId){
       nextBtn.style.display = hasOverflow ? 'flex' : 'none';
     }
   }
+
+  // View 端同步缩略条
+  updateViewThumbbar(areaId);
 }
 
 /* 启用全局文本编辑：在编辑模式下为主要内容中的标题、段落等元素增加 contenteditable 属性，以保持原有样式并允许直接编辑 */
@@ -1528,6 +1540,73 @@ function fillLookAnalyses(){
 }
 
 /* 为每个 look 创建管理器控件（如果尚不存在） */
+
+/* View 端：在每个图片占位符下方插入可滑动缩略预览条（仅 view 显示） */
+function ensureViewThumbStrips(){
+  $$('.image-area').forEach(area=>{
+    const areaId = area.id;
+    if(!areaId) return;
+    // 已存在则跳过
+    if(document.querySelector(`.view-thumb-wrapper[data-for="${areaId}"]`)) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'thumb-wrapper view-thumb-wrapper';
+    wrap.dataset.for = areaId;
+    wrap.innerHTML = `
+      <button class="thumb-scroll prev" title="向前滚动">⟵</button>
+      <div class="thumbbar" draggable="false"></div>
+      <button class="thumb-scroll next" title="向后滚动">⟶</button>
+    `;
+    // 插入到占位符（image-area）下方
+    area.insertAdjacentElement('afterend', wrap);
+  });
+}
+
+function updateViewThumbbar(areaId){
+  const wrap = document.querySelector(`.view-thumb-wrapper[data-for="${areaId}"]`);
+  if(!wrap) return;
+  // 仅 view 模式显示
+  wrap.style.display = (MODE==='view') ? 'flex' : 'none';
+
+  const bar = wrap.querySelector('.thumbbar');
+  const list = imageArchives[areaId] || [];
+  if(!bar) return;
+
+  bar.innerHTML = '';
+  list.forEach((it,i)=>{
+    const th = document.createElement('div');
+    th.className='thumb';
+    th.draggable = false;
+    th.dataset.index = i;
+    th.dataset.areaId = areaId;
+
+    const img = document.createElement('img');
+    img.loading='lazy';
+    img.src = it.src;
+    th.appendChild(img);
+
+    th.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      goTo(areaId, i);
+    });
+
+    bar.appendChild(th);
+  });
+
+  // 高亮当前项
+  highlightThumb(areaId, currentIndex[areaId] || 0);
+
+  // 绑定左右滚动按钮 & 根据溢出显示
+  const prevBtn = wrap.querySelector('.thumb-scroll.prev');
+  const nextBtn = wrap.querySelector('.thumb-scroll.next');
+  if(prevBtn && nextBtn){
+    prevBtn.onclick = (e)=>{ e.stopPropagation(); bar.scrollBy({left: -(bar.clientWidth - 60), behavior:'smooth'}); };
+    nextBtn.onclick = (e)=>{ e.stopPropagation(); bar.scrollBy({left: (bar.clientWidth - 60), behavior:'smooth'}); };
+    const hasOverflow = bar.scrollWidth > bar.clientWidth + 1;
+    prevBtn.style.display = hasOverflow ? 'flex' : 'none';
+    nextBtn.style.display = hasOverflow ? 'flex' : 'none';
+  }
+}
 function ensureManagers(){
   document.querySelectorAll('.image-area').forEach(area=>{
     const id = area.id;
@@ -1826,15 +1905,32 @@ async function bootLoad(){
       }
       setStatus?.('已加载'); loader(false);
     }else{
+      // 1) 先尝试本地（可能因图片过大超出 localStorage 而失败）
       const loaded = loadLocal();
-      if(loaded && MODE==='edit'){ toast('已加载本地数据，请注意数据保存在本地浏览器中'); }
+      if(loaded){
+        if(MODE==='edit'){ toast('已加载本地数据（保存在本地浏览器）'); }
+        return;
+      }
+
+      // 2) 若本地没有数据，但曾经做过云端同步（本地缓存了 gistId），则自动从云端恢复
+      const cachedGistId = (localStorage.getItem(GIST_ID_KEY) || '').trim();
+      if(cachedGistId){
+        loader(true); setStatus?.('从云端恢复…');
+        const data = await fetchGist(cachedGistId);
+        if(data?.imageArchives){
+          imageArchives = data.imageArchives;
+          toast('已从云端恢复数据');
+        }
+        setStatus?.('已加载'); loader(false);
+      }
     }
   }catch(e){
-    console.error(e); toast('远程加载失败，尝试本地数据');
-    loadLocal(); loader(false);
+    console.error(e);
+    toast('加载失败，尝试本地数据');
+    try{ loadLocal(); }catch(_) {}
+    loader(false);
   }
 }
-
 /* 绑定所有槽实例 */
 function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
 
@@ -1845,9 +1941,12 @@ function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
   await bootLoad();
   // 确保每个 look 都有管理控件，再绑定事件
   ensureManagers();
+  ensureViewThumbStrips();
   // 调整模式应用：由于 ensureManagers 会动态插入 manager，需要重新应用模式一次
   applyMode();
   bindAllAreas();
+  // 初始化 view 端缩略条
+  $$('.image-area').forEach(a=>{ if(a.id) updateViewThumbbar(a.id); });
   bindNav();
   bindKeys();
   // fill look analysis content after all areas have been bound
