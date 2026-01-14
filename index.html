@@ -337,21 +337,27 @@ h1{
 }
 .viewer.active{display:flex}
 .viewer-box{
-  /* 预览框采用自适应宽高，并居中显示。避免固定宽度导致图片在某些长宽比下偏向一侧。
-     使用 flex 布局将图片居中，同时通过 max-width/max-height 限制在视口的 90%，
-     让预览框尺寸跟随图片大小自适应，在不同尺寸图片下都能保持居中。 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: auto;
-  height: auto;
-  max-width: 90vw;
-  max-height: 90vh;
-  background: #0f0f0f;
-  border: 1px solid #333;
-  border-radius: 14px;
-  box-shadow: 0 20px 80px rgba(0,0,0,.5);
-  padding: 0;
+  /* 大图预览：固定高度，图片始终居中并等比完整展示 */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:92vw;
+  max-width:1200px;
+  height:78vh;
+  max-height:78vh;
+  background:#0f0f0f;
+  border:1px solid #333;
+  border-radius:14px;
+  box-shadow:0 20px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+#viewer-img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  display:block;
 }
 .viewer img{
   /* 为预览图设置最大宽高，不强制拉伸，以适配不同长宽比的图片。在移动端避免超出视口导致页面缩放 */
@@ -988,21 +994,46 @@ function validateFiles(files){
 }
 
 /* 压缩到 1600px 宽，质量80%（PNG/GIF→JPEG；保留WebP） */
+function blobToDataURL(blob){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=>resolve(r.result);
+    r.onerror = ()=>reject(r.error || new Error('FileReader error'));
+    r.readAsDataURL(blob);
+  });
+}
+
 async function compressFile(file){
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, MAX_W / bitmap.width);
   const w = Math.round(bitmap.width * scale);
   const h = Math.round(bitmap.height * scale);
-  const canvas = new OffscreenCanvas(w,h);
-  const ctx = canvas.getContext('2d',{alpha:false});
+
+  // Prefer OffscreenCanvas (fast), fallback to normal canvas when unavailable
+  let canvas, ctx;
+  if (typeof OffscreenCanvas !== 'undefined'){
+    canvas = new OffscreenCanvas(w,h);
+    ctx = canvas.getContext('2d',{alpha:false});
+  } else {
+    canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    ctx = canvas.getContext('2d',{alpha:false});
+  }
   ctx.drawImage(bitmap,0,0,w,h);
+
   const mime = file.type==='image/webp' ? 'image/webp' : 'image/jpeg';
-  const blob = await canvas.convertToBlob({type:mime, quality:JPEG_QUALITY});
-  const buf = await blob.arrayBuffer();
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-  const dataUrl = `data:${mime};base64,${base64}`;
+  let blob;
+  if (canvas.convertToBlob){
+    blob = await canvas.convertToBlob({type:mime, quality:JPEG_QUALITY});
+  } else {
+    blob = await new Promise(res=>canvas.toBlob(res, mime, JPEG_QUALITY));
+  }
+
+  // IMPORTANT: avoid btoa(String.fromCharCode(...)) which breaks on >~64KB buffers
+  const dataUrl = await blobToDataURL(blob);
   return {src:dataUrl,w,h,name:file.name};
 }
+
 
 /* 本地存取/分享/Gist API */
 function saveLocal(){
@@ -1587,11 +1618,8 @@ function updateViewThumbbar(areaId){
 
     th.addEventListener('click', (e)=>{
       e.stopPropagation();
-      if(MODE==='view'){
-        openViewerAt(areaId, i);
-      }else{
-        goTo(areaId, i);
-      }
+      // view 端：点击缩略图仅切换占位符内显示的主图，不直接打开大图
+      gotoIndex(areaId, i);
     });
 
     bar.appendChild(th);
@@ -1769,7 +1797,7 @@ function applyMode() {
 }
 
 /* 快捷键 */
-function bindKeys(){ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeViewer(); }); }
+function bindKeys(){ document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const sm=$('#shareModal'); if(sm && sm.classList.contains('show')){ closeShareModal(); return; } closeViewer(); } }); }
 
 // 预览层导航按钮事件绑定
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -1851,6 +1879,47 @@ function openShareModal(url) {
     input.select(); // 自动选中链接，方便复制
   }, 0);
 }
+
+function closeShareModal(){
+  const modal = $('#shareModal');
+  if(!modal) return;
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function bindShareModal(){
+  const modal = $('#shareModal');
+  if(!modal) return;
+
+  const card = $('.modal-card', modal);
+  const closeBtn = $('#shareModalClose');
+  const copyBtn = $('#shareModalCopy');
+
+  // 点击关闭按钮
+  closeBtn?.addEventListener('click', e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    closeShareModal();
+  });
+
+  // 点击遮罩关闭
+  modal.addEventListener('click', e=>{
+    if(e.target===modal) closeShareModal();
+  });
+
+  // 点击卡片不关闭
+  card?.addEventListener('click', e=>e.stopPropagation());
+
+  // 复制按钮
+  copyBtn?.addEventListener('click', async ()=>{
+    const input = $('#shareModalInput');
+    const text = input?.value || '';
+    if(!text){ toast('链接为空'); return; }
+    const ok = await copyTextSafe(text);
+    toast(ok ? '已复制' : '复制失败', 1800);
+  });
+}
+
 
 async function doShare() {
   try {
@@ -1990,6 +2059,7 @@ function bindAllAreas(){ $$('.image-area').forEach(bindArea); }
   $$('.image-area').forEach(a=>{ if(a.id) updateViewThumbbar(a.id); });
   bindNav();
   bindKeys();
+  bindShareModal();
   // fill look analysis content after all areas have been bound
   fillLookAnalyses();
   // 在编辑模式下启用全局文本编辑功能
