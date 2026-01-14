@@ -1587,7 +1587,11 @@ function updateViewThumbbar(areaId){
 
     th.addEventListener('click', (e)=>{
       e.stopPropagation();
-      goTo(areaId, i);
+      if(MODE==='view'){
+        openViewerAt(areaId, i);
+      }else{
+        goTo(areaId, i);
+      }
     });
 
     bar.appendChild(th);
@@ -1905,29 +1909,60 @@ async function bootLoad(){
       }
       setStatus?.('已加载'); loader(false);
     }else{
-      // 1) 先尝试本地（可能因图片过大超出 localStorage 而失败）
-      const loaded = loadLocal();
-      if(loaded){
-        // 如果本地数据存在但图片为空（常见于 localStorage 超限写入失败后只剩空壳），并且有云端 gistId，则继续尝试从云端恢复
-        const localHasAny = (()=>{ try{
-          return Object.values(imageArchives||{}).some(v=>Array.isArray(v) && v.length>0);
-        }catch(e){ return false; } })();
-        if(localHasAny){
-          if(MODE==='edit'){ toast('已加载本地数据（保存在本地浏览器）'); }
-          return;
+      // 1) 先尝试本地（但不再“只要本地有数据就直接 return”，因为本地可能是旧的/不完整的）
+      let localObj = null;
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(raw){
+          localObj = JSON.parse(raw);
+          if(localObj && localObj.imageArchives){
+            imageArchives = localObj.imageArchives;
+          }
         }
+      }catch(e){ console.error(e); }
+
+      const countArchives = (archives)=>{
+        try{
+          return Object.values(archives||{}).reduce((acc,v)=>acc + (Array.isArray(v)?v.length:0), 0);
+        }catch(e){ return 0; }
+      };
+
+      const localCount = countArchives(imageArchives);
+      const localTs = (localObj && localObj.ts) ? Number(localObj.ts) : 0;
+
+      if(localCount>0 && MODE==='edit'){
+        toast('已加载本地数据（保存在本地浏览器）');
       }
 
-      // 2) 若本地没有数据（或本地图片为空），但曾经做过云端同步（本地缓存了 gistId），则自动从云端恢复
+      // 2) 若曾经云端同步过（缓存了 gistId），则对比云端版本：
+      //    - 云端更“新”(ts 更大) 或
+      //    - 云端图片总数更多 或
+      //    - 本地为空
+      //    则以云端为准，避免“云端有但编辑端刷新丢失”的问题
       const cachedGistId = (localStorage.getItem(GIST_ID_KEY) || '').trim();
       if(cachedGistId){
-        loader(true); setStatus?.('从云端恢复…');
-        const data = await fetchGist(cachedGistId);
-        if(data?.imageArchives){
-          imageArchives = data.imageArchives;
-          toast('已从云端恢复数据');
+        try{
+          loader(true); setStatus?.('检查云端版本…');
+          const remote = await fetchGist(cachedGistId);
+          if(remote?.imageArchives){
+            const remoteCount = countArchives(remote.imageArchives);
+            const remoteTs = remote.ts ? Number(remote.ts) : 0;
+            const shouldUseRemote = (localCount===0) || (remoteTs && remoteTs>localTs) || (remoteCount>localCount);
+
+            if(shouldUseRemote){
+              imageArchives = remote.imageArchives;
+              toast(localCount>0 ? '已更新为云端最新数据' : '已从云端恢复数据');
+              // 尝试回写本地（可能因容量限制失败，但不影响加载）
+              try{
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({portfolioId,imageArchives,version:remote.version||'3.4',ts:Date.now()}));
+              }catch(_){}
+            }
+          }
+          setStatus?.('已加载'); loader(false);
+        }catch(e){
+          console.error(e);
+          setStatus?.('已加载'); loader(false);
         }
-        setStatus?.('已加载'); loader(false);
       }
     }
   }catch(e){
