@@ -1013,9 +1013,83 @@ h1{
     </div>
   </section>
 
+  <!-- 06 AI设计系统 -->
+  <section id="design-agent" class="section container">
+    <h2>06. AI DESIGN AGENT SYSTEM</h2>
+    <h3>智能设计工作流：从品牌基因到AI创作</h3>
+    
+    <div class="content-block">
+        <h4>系统概述</h4>
+        <p>基于 <strong>n8n + Gemini + Google Drive</strong> 构建的企业级AI服装设计工作流系统，包含 <strong>404个节点</strong>、<strong>14个功能模块</strong>，实现从品牌风格记忆到AI设计生成的全流程自动化。</p>
+        
+        <h4>三级风格基因系统</h4>
+        <p><strong>品牌风格基因 (65%)</strong> + <strong>设计师风格基因 (25%)</strong> + <strong>个人喜好基因 (10%)</strong></p>
+        <p>通过智能权重融合，确保AI生成的设计既符合品牌调性，又富有创新性和个性化。</p>
+        
+        <h4>核心功能模块</h4>
+        <p>1. <strong>AI设计生成：</strong>款式生成、图案生成、模特生成、线稿转实物</p>
+        <p>2. <strong>商业智能：</strong>企划同频、爆款趋势分析、面料复用分析、趋势资讯分析</p>
+        <p>3. <strong>智能协作：</strong>飞书/钉钉集成、在线编辑、审批流程</p>
+    </div>
+
+    <h3>AI工作流效果展示</h3>
+    <p>以下展示AI设计系统生成的服装款式、图案设计、模特试衣等效果图，以及工作流节点图和系统架构。</p>
+    
+    <div id="ai-workflow-area" class="image-area clickable" data-max="20" data-label="AI工作流">
+      <div class="placeholder">点击/拖拽图片到此处导入AI设计效果图（款式生成、图案设计、模特试衣、工作流节点图）</div>
+      <div class="carousel"></div>
+      <button class="navbtn prev" title="上一张" style="display:none">⟵</button>
+      <button class="navbtn next" title="下一张" style="display:none">⟶</button>
+      <div class="counter">0/0</div>
+    </div>
+    <div class="manager" data-for="ai-workflow-area">
+      <button class="mbtn" data-act="upload">上传</button>
+      <button class="mbtn" data-act="set-cover">设为封面</button>
+      <button class="mbtn" data-act="move-up">上移</button>
+      <button class="mbtn" data-act="move-down">下移</button>
+      <button class="mbtn" data-act="del">删除</button>
+      <span class="badge" id="count-ai-workflow-area">数量: 0</span>
+      <input type="file" accept="image/*" multiple hidden/>
+      <div class="thumb-wrapper">
+        <button class="thumb-scroll prev" title="向前滚动">⟵</button>
+        <div class="thumbbar" draggable="false"></div>
+        <button class="thumb-scroll next" title="向后滚动">⟶</button>
+      </div>
+    </div>
+
+    <div class="content-block" style="margin-top:40px">
+        <h4>体验完整工作流系统</h4>
+        <p>访问在线工作室，体验所有14个AI设计工作流功能，包括实时生成、历史记录、设计画廊等。</p>
+        <div style="text-align:center;margin-top:20px">
+            <a href="https://3000-iv7eupozd0odn2g1efqgk-34be77e1.us2.manus.computer" 
+               target="_blank" 
+               class="btn acc" 
+               style="display:inline-block;padding:14px 28px;font-size:1rem;text-decoration:none">
+                进入AI设计工作室 →
+            </a>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px">
+            <div style="background:#0f0f0f;border:1px solid #282828;border-radius:10px;padding:20px;text-align:center">
+                <div style="font:900 2.4rem ui-monospace;color:var(--acc);margin-bottom:8px">404</div>
+                <div style="font:600 .9rem ui-monospace;color:#999">工作流节点</div>
+            </div>
+            <div style="background:#0f0f0f;border:1px solid #282828;border-radius:10px;padding:20px;text-align:center">
+                <div style="font:900 2.4rem ui-monospace;color:var(--acc);margin-bottom:8px">14</div>
+                <div style="font:600 .9rem ui-monospace;color:#999">功能模块</div>
+            </div>
+            <div style="background:#0f0f0f;border:1px solid #282828;border-radius:10px;padding:20px;text-align:center">
+                <div style="font:900 2.4rem ui-monospace;color:var(--acc);margin-bottom:8px">3</div>
+                <div style="font:600 .9rem ui-monospace;color:#999">级风格基因</div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+
   <!-- 06 总结与未来展望 -->
   <section id="summary" class="section container">
-    <h2>06. SUMMARY & OUTLOOK</h2>
+    <h2>07. SUMMARY & OUTLOOK</h2>
     <h3>T-C-I 模型收尾：商业战略总结</h3>
     <div class="content-block">
         <h4>T - Takeaway (核心洞察):</h4>
