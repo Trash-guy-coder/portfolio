@@ -10,7 +10,7 @@
     <!-- 视口设置：保持原始比例，并禁止浏览器自动缩放页面 -->
     <!-- 设置 maximum-scale=1.0 和 user-scalable=no 防止在移动端预览大图时页面被强制放大或缩小 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>SM-PROJECT | URBAN VOYAGE | DESIGN PORTFOLIO</title>
+<title>SM-PROJECT | HEART OVER MIND | DESIGN PORTFOLIO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+SC:wght@100..900&display=swap" rel="stylesheet">
 <style>
@@ -483,8 +483,8 @@ h1{
   <!-- 03 趋势与灵感解析 (情绪版/色彩版植入区) -->
   <section id="trends" class="section container">
     <h2>03. TRENDS & MOOD</h2>
-    <h3>趋势转化漏斗：从高街 T 台到商业爆款</h3>
-    <p>本板块展示了从 Miu Miu、Diesel 等高街品牌提取的<strong>结构、肌理、色彩</strong>，并将其转化为符合森马<strong>商业可行性</strong>的灵感矩阵。请在此区域导入您的<strong>“趋势转化漏斗”</strong>图片。</p>
+    <h3>AI工作协同：从款式图到落地以及商用Look</h3>
+    <p>本板块展示了运用Ai将模糊的平面图，制作成有<strong>强一致性<strong>的视觉效果图，带场景以及分镜皆为<strong>Ai生成<strong>。并且在后端展示通过<strong>通用大模型<strong><strong>完全自研<strong>的<strong>服装工作流节点图<strong></p>
     <div id="moodboard-area" class="image-area clickable" data-max="20" data-label="情绪版">
       <div class="placeholder">点击/拖拽图片到此处导入您的趋势转化图（T台、商业应用、森马提炼）</div>
       <div class="carousel"></div>
@@ -894,7 +894,7 @@ h1{
     <h3>T-C-I 模型收尾：商业战略总结</h3>
     <div class="content-block">
         <h4>T - Takeaway (核心洞察):</h4>
-        <p>URBAN VOYAGE 的核心在于通过<strong>“实穿性、趣味性、高品质”</strong>的组合价值来驱动 Z 世代消费。设计理念最终需落地于<strong>商业可行性</strong>。</p>
+        <p>HEART OVER MIND 的核心在于通过<strong>“悦己性、趣味性、舒适性、社交性”</strong>的组合价值来驱动 Z 世代消费。设计理念最终需落地于<strong>商业可行性</strong>。</p>
         <h4>C - Continuity (连续性与下一季展望):</h4>
         <p>下一季主题：<strong>POST-ARCHIVE: 数字炼金术</strong>。延续“功能”和“情绪”，侧重于环保再生纤维、仿生肌理面料，以及<strong>可折叠、可收纳</strong>的模块化廓形进化。</p>
         <h4>I - Impact (商业影响):</h4>
@@ -903,7 +903,7 @@ h1{
   </section>
 
   <footer class="container" style="padding:40px;border-top:1px solid var(--line);text-align:center;font:600 .8rem ui-monospace;color:#777">
-    SM-PROJECT URBAN VOYAGE END FILE. DESIGNED BY [集].
+    SM-PROJECT HEART OVER MIND END FILE. DESIGNED BY [白福利].
   </footer>
 </div>
 
@@ -1078,7 +1078,7 @@ async function ensureGist(data){
   if(!data || typeof data !== 'object') throw new Error('无效的数据格式');
 
   const body = {
-    description:`URBAN VOYAGE ${portfolioId}`,
+    description:`HEART OVER MIND ${portfolioId}`,
     files:{['archive_'+portfolioId+'.json']:{content:JSON.stringify(data)}},
     public:false
   };
